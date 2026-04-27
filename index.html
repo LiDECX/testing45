@@ -9,336 +9,194 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
   <style>
     :root {
-      --bg: #0a0a0a;
-      --surface: #111111;
-      --border: #1e1e1e;
-      --accent: #e8e8e8;
-      --muted: #555;
-      --text: #999;
-      --bright: #fff;
-      --green: #4ade80;
-      --sun: #FFD166;
-      --timer-bg: #1a1a1a;
+      --bg: #0a0a0a; --surface: #111111; --border: #1e1e1e;
+      --accent: #e8e8e8; --muted: #555; --text: #999; --bright: #fff;
+      --green: #4ade80; --sun: #FFD166; --timer-bg: #1a1a1a;
     }
-
     [data-theme="light"] {
-      --bg: #ffffff;
-      --surface: #f5f5f5;
-      --border: #e5e5e5;
-      --accent: #1a1a1a;
-      --muted: #888;
-      --text: #444;
-      --bright: #000;
-      --green: #16a34a;
-      --sun: #f59e0b;
-      --timer-bg: #e2e8f0;
+      --bg: #ffffff; --surface: #f5f5f5; --border: #e5e5e5;
+      --accent: #1a1a1a; --muted: #888; --text: #444; --bright: #000;
+      --green: #16a34a; --sun: #f59e0b; --timer-bg: #e2e8f0;
     }
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Inter', sans-serif;
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-      transition: background 0.2s ease;
+      background: var(--bg); color: var(--text);
+      font-family: 'Inter', sans-serif; line-height: 1.6;
+      -webkit-font-smoothing: antialiased; transition: background 0.2s ease;
     }
-
-    .container {
-      max-width: 680px;
-      margin: 0 auto;
-      padding: 0 24px;
+    .theme-toggle, .search-input, .badge, .hero-name, .student-name, 
+    .exam-date, .exam-place, .timer, .footer-inner, .student-num, .stat-label, .stat-count {
+      font-family: 'JetBrains Mono', monospace;
     }
-
-    header {
-      padding: 24px 0;
-      display: flex;
-      justify-content: flex-end;
-      gap: 12px;
-    }
-
+    .container { max-width: 680px; margin: 0 auto; padding: 0 24px; }
+    header { padding: 24px 0; display: flex; justify-content: flex-end; gap: 12px; }
     .theme-toggle, .search-input {
-      background: none;
-      border: 1px solid var(--border);
-      color: var(--bright);
-      border-radius: 6px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
-      transition: all 0.15s;
+      border: 1px solid var(--border); color: var(--bright);
+      border-radius: 6px; font-size: 0.75rem; transition: all 0.15s;
     }
-
-    .theme-toggle {
-      cursor: pointer;
-      padding: 6px 12px;
-    }
-
-    .theme-toggle:hover {
-      background: var(--surface);
-      border-color: var(--muted);
-    }
-
-    .search-container {
-      margin-bottom: 24px;
-      position: sticky;
-      top: 12px;
-      z-index: 100;
-    }
-
-    .search-input {
-      width: 100%;
-      padding: 12px 16px;
-      background: var(--bg);
-      backdrop-filter: blur(10px);
-      outline: none;
-    }
-
-    .search-input:focus {
-      border-color: var(--sun);
-    }
-
-    #hero { padding: 20px 0 60px; }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      color: var(--muted);
-      border: 1px solid var(--border);
-      padding: 6px 12px;
-      border-radius: 6px;
-      margin-bottom: 24px;
-    }
-
-    .hero-name {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: clamp(1.8rem, 5vw, 2.2rem);
-      font-weight: 600;
-      color: var(--bright);
-      line-height: 1.2;
-      margin-bottom: 8px;
-    }
-
-    .students-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .student-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 20px;
-    }
-
-    .student-header {
-      margin-bottom: 16px;
-      padding-bottom: 8px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .student-name {
-      font-family: 'JetBrains Mono', monospace;
-      color: var(--bright);
-      font-size: 1rem;
-      font-weight: 600;
-    }
-
-    .student-class {
-      font-size: 0.65rem;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    .exam-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 10px 0;
-      border-bottom: 1px solid rgba(128, 128, 128, 0.05);
-    }
-
+    .theme-toggle { background: none; cursor: pointer; padding: 6px 12px; }
+    .theme-toggle:hover { background: var(--surface); border-color: var(--muted); }
+    .search-container { margin-bottom: 24px; position: sticky; top: 12px; z-index: 100; }
+    .search-input { width: 100%; padding: 12px 16px; background: var(--bg); backdrop-filter: blur(10px); outline: none; }
+    .search-input:focus { border-color: var(--sun); }
+    #hero { padding: 20px 0 40px; }
+    .badge { display: inline-flex; align-items: center; gap: 8px; font-size: 0.7rem; color: var(--muted); border: 1px solid var(--border); padding: 6px 12px; border-radius: 6px; margin-bottom: 24px; }
+    .hero-name { font-size: clamp(1.5rem, 5vw, 2rem); font-weight: 600; color: var(--bright); line-height: 1.2; margin-bottom: 8px; }
+    .students-grid { display: flex; flex-direction: column; gap: 4px; }
+    .student-details { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .student-summary { padding: 14px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; list-style: none; }
+    .student-summary::-webkit-details-marker { display: none; }
+    .name-block { display: flex; align-items: center; gap: 12px; }
+    .student-num { font-size: 0.75rem; color: var(--muted); min-width: 20px; }
+    .student-name { color: var(--bright); font-size: 0.9rem; font-weight: 500; }
+    .expand-icon { font-size: 0.7rem; color: var(--muted); transition: transform 0.2s; }
+    .student-details[open] .expand-icon { transform: rotate(180deg); }
+    .exam-list { padding: 0 20px 16px 20px; border-top: 1px solid rgba(255,255,255,0.03); }
+    .exam-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(128, 128, 128, 0.05); }
     .exam-item:last-child { border-bottom: none; }
-
-    .exam-name {
-      color: var(--accent);
-      font-size: 0.85rem;
-      font-weight: 500;
-    }
-
-    .exam-date {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      color: var(--sun);
-    }
-
-    .exam-place {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      color: var(--muted);
-      margin-top: 4px;
-    }
-
-    .timer {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.75rem;
-      color: var(--green);
-      background: var(--timer-bg);
-      padding: 4px 8px;
-      border-radius: 4px;
-      min-width: 110px;
-      text-align: center;
-    }
-
+    .exam-name { color: var(--accent); font-size: 0.8rem; font-weight: 500; }
+    .exam-date { font-size: 0.65rem; color: var(--sun); }
+    .exam-place { font-size: 0.65rem; color: var(--muted); margin-top: 2px; }
+    .timer { font-size: 0.7rem; color: var(--green); background: var(--timer-bg); padding: 3px 8px; border-radius: 4px; min-width: 100px; text-align: center; }
     .timer.expired { color: var(--muted); }
-
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 24px 0;
-      margin-top: 40px;
-    }
-
-    .footer-inner {
-      display: flex;
-      justify-content: space-between;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      color: var(--muted);
-    }
-
+    .stats-container { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+    .stat-row { display: flex; flex-direction: column; gap: 6px; }
+    .stat-info { display: flex; justify-content: space-between; font-size: 0.75rem; }
+    .stat-bar-bg { height: 6px; background: var(--timer-bg); border-radius: 3px; overflow: hidden; }
+    .stat-bar-fill { height: 100%; background: var(--sun); border-radius: 3px; transition: width 1s ease-out; }
+    .stat-count { color: var(--bright); font-weight: 600; }
+    footer { border-top: 1px solid var(--border); padding: 24px 0; margin-top: 40px; }
+    .footer-inner { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--muted); }
     @media (max-width: 500px) {
       .exam-item { flex-direction: column; align-items: flex-start; gap: 6px; }
-      .timer { width: 100%; text-align: left; }
+      .timer { width: 100%; text-align: left; padding-left: 0; background: none; }
     }
   </style>
 </head>
 <body data-theme="dark">
-
 <div class="container">
-  <header>
-    <button class="theme-toggle" id="themeToggle">LIGHT</button>
-  </header>
-
+  <header><button class="theme-toggle" id="themeToggle">LIGHT</button></header>
   <div class="search-container">
     <input type="text" id="searchInput" class="search-input" placeholder="Поиск по фамилии...">
   </div>
-
   <section id="hero">
     <div class="badge">✦ ГИА-9 • 2026</div>
-    <h1 class="hero-name">Расписание ОГЭ 9«В»</h1>
-    
+    <h1 class="hero-name">Экзамены 9«В»</h1>
     <div class="students-grid" id="studentsGrid"></div>
   </section>
-
+  <section id="stats">
+    <div class="badge">📊 Статистика предметов</div>
+    <div class="stats-container" id="statsContainer"></div>
+  </section>
   <footer>
     <div class="footer-inner">
       <span>© <span id="year"></span> LiDECX</span>
-      <span>v2.2.0</span>
+      <span>v2.7.0</span>
     </div>
   </footer>
 </div>
-
 <script>
-  const studentsData = [
-    { fullName: "Балабин Михаил Васильевич", exams: [{ subject: "Математика", date: "2026-06-02", place: "ГБОУ гимназия №446" }, { subject: "География", date: "2026-06-05", place: "ГБОУ гимназия №446" }, { subject: "Русский язык", date: "2026-06-09", place: "ГБОУ гимназия №446" }, { subject: "Информатика", date: "2026-06-16", place: "ГБОУ СОШ №258" }] },
-    { fullName: "Басалаева Диана Захаровна", exams: [{ subject: "Математика", date: "2026-06-02", place: "ГБОУ гимназия №446" }, { subject: "География", date: "2026-06-05", place: "ГБОУ гимназия №446" }, { subject: "Русский язык", date: "2026-06-09", place: "ГБОУ гимназия №446" }, { subject: "Обществознание", date: "2026-06-16", place: "ГБОУ СОШ №258" }] },
-    { fullName: "Берсудская Валерия Константиновна", exams: [{ subject: "Математика", date: "2026-06-02", place: "ГБОУ гимназия №446" }, { subject: "Биология", date: "2026-06-05", place: "ГБОУ гимназия №446" }, { subject: "Русский язык", date: "2026-06-09", place: "ГБОУ гимназия №446" }, { subject: "Информатика", date: "2026-06-16", place: "ГБОУ СОШ №258" }] },
-    { fullName: "Благов Максим Антонович", exams: [{ subject: "Математика", date: "2026-06-02", place: "ГБОУ гимназия №446" }, { subject: "География", date: "2026-06-05", place: "ГБОУ гимназия №446" }, { subject: "Русский язык", date: "2026-06-09", place: "ГБОУ гимназия №446" }, { subject: "Информатика", date: "2026-06-16", place: "ГБОУ СОШ №258" }] },
-    { fullName: "Васильев Михаил Сергеевич", exams: [{ subject: "Математика", date: "2026-06-02", place: "ГБОУ гимназия №446" }, { subject: "Английский язык", date: "2026-06-05", place: "ГБОУ гимназия №446" }, { subject: "Английский язык (устный)", date: "2026-06-06", place: "ГБОУ гимназия №446" }, { subject: "Русский язык", date: "2026-06-09", place: "ГБОУ гимназия №446" }, { subject: "Информатика", date: "2026-06-16", place: "ГБОУ СОШ №258" }] },
-    { fullName: "Зыкова Милана Дмитриевна", exams: [{ subject: "Математика", date: "2026-06-02", place: "ГБОУ гимназия №446" }, { subject: "Английский язык", date: "2026-06-05", place: "ГБОУ гимназия №446" }, { subject: "Английский язык (устный)", date: "2026-06-06", place: "ГБОУ гимназия №446" }, { subject: "Русский язык", date: "2026-06-09", place: "ГБОУ гимназия №446" }, { subject: "Обществознание", date: "2026-06-16", place: "ГБОУ СОШ №258" }] },
-    { fullName: "Клочков Роман Борисович", exams: [{ subject: "Математика", date: "2026-06-02", place: "ГБОУ гимназия №446" }, { subject: "Английский язык", date: "2026-06-05", place: "ГБОУ гимназия №446" }, { subject: "Английский язык (устный)", date: "2026-06-06", place: "ГБОУ гимназия №446" }, { subject: "Русский язык", date: "2026-06-09", place: "ГБОУ гимназия №446" }, { subject: "Информатика", date: "2026-06-16", place: "ГБОУ СОШ №258" }] },
-    { fullName: "Козлова Александра Евгеньевна", exams: [{ subject: "Математика", date: "2026-06-02", place: "ГБОУ гимназия №446" }, { subject: "Английский язык", date: "2026-06-05", place: "ГБОУ гимназия №446" }, { subject: "Английский язык (устный)", date: "2026-06-06", place: "ГБОУ гимназия №446" }, { subject: "Русский язык", date: "2026-06-09", place: "ГБОУ гимназия №446" }, { subject: "География", date: "2026-06-16", place: "ГБОУ СОШ №258" }] },
-    { fullName: "Козлова Кира Евгеньевна", exams: [{ subject: "Математика", date: "2026-06-02", place: "ГБОУ гимназия №446" }, { subject: "Английский язык", date: "2026-06-05", place: "ГБОУ гимназия №446" }, { subject: "Английский язык (устный)", date: "2026-06-06", place: "ГБОУ гимназия №446" }, { subject: "Русский язык", date: "2026-06-09", place: "ГБОУ гимназия №446" }, { subject: "География", date: "2026-06-16", place: "ГБОУ СОШ №258" }] },
-    { fullName: "Копылова Мария Александровна", exams: [{ subject: "Математика", date: "2026-06-02", place: "ГБОУ гимназия №446" }, { subject: "География", date: "2026-06-05", place: "ГБОУ гимназия №446" }, { subject: "Русский язык", date: "2026-06-09", place: "ГБОУ гимназия №446" }, { subject: "Биология", date: "2026-06-16", place: "ГБОУ СОШ №258" }] },
-    { fullName: "Люйк Даниил Александрович", exams: [{ subject: "Математика", date: "2026-06-02", place: "ГБОУ гимназия №446" }, { subject: "Английский язык", date: "2026-06-05", place: "ГБОУ гимназия №446" }, { subject: "Английский язык (устный)", date: "2026-06-06", place: "ГБОУ гимназия №446" }, { subject: "Русский язык", date: "2026-06-09", place: "ГБОУ гимназия №446" }, { subject: "Химия", date: "2026-06-16", place: "ГБОУ СОШ №258" }] },
-    { fullName: "Мещанинов Никита Алексеевич", exams: [{ subject: "Математика", date: "2026-06-02", place: "ГБОУ гимназия №446" }, { subject: "Химия", date: "2026-06-05", place: "ГБОУ СОШ №258" }, { subject: "Русский язык", date: "2026-06-09", place: "ГБОУ гимназия №446" }, { subject: "Биология", date: "2026-06-16", place: "ГБОУ СОШ №258" }] },
-    { fullName: "Михеева Татьяна Викторовна", exams: [{ subject: "Математика", date: "2026-06-02", place: "ГБОУ гимназия №446" }, { subject: "Биология", date: "2026-06-05", place: "ГБОУ гимназия №446" }, { subject: "Русский язык", date: "2026-06-09", place: "ГБОУ гимназия №446" }, { subject: "Информатика", date: "2026-06-16", place: "ГБОУ СОШ №258" }] },
-    { fullName: "Назаров Владимир Николаевич", exams: [{ subject: "Математика", date: "2026-06-02", place: "ГБОУ гимназия №446" }, { subject: "Обществознание", date: "2026-06-05", place: "ГБОУ гимназия №446" }, { subject: "Русский язык", date: "2026-06-09", place: "ГБОУ гимназия №446" }, { subject: "Информатика", date: "2026-06-16", place: "ГБОУ СОШ №258" }] },
-    { fullName: "Песков Андрей Дмитриевич", exams: [{ subject: "Математика", date: "2026-06-02", place: "ГБОУ гимназия №446" }, { subject: "Химия", date: "2026-06-05", place: "ГБОУ СОШ №258" }, { subject: "Русский язык", date: "2026-06-09", place: "ГБОУ гимназия №446" }, { subject: "Биология", date: "2026-06-16", place: "ГБОУ СОШ №258" }] },
-    { fullName: "Смирнов Александр Максимович", exams: [{ subject: "Математика", date: "2026-06-02", place: "ГБОУ гимназия №446" }, { subject: "Английский язык", date: "2026-06-05", place: "ГБОУ гимназия №446" }, { subject: "Английский язык (устный)", date: "2026-06-06", place: "ГБОУ гимназия №446" }, { subject: "Русский язык", date: "2026-06-09", place: "ГБОУ гимназия №446" }, { subject: "Биология", date: "2026-06-16", place: "ГБОУ СОШ №258" }] },
-    { fullName: "Соловьев Егор Алексеевич", exams: [{ subject: "Математика", date: "2026-06-02", place: "ГБОУ гимназия №446" }, { subject: "География", date: "2026-06-05", place: "ГБОУ гимназия №446" }, { subject: "Русский язык", date: "2026-06-09", place: "ГБОУ гимназия №446" }, { subject: "Биология", date: "2026-06-16", place: "ГБОУ СОШ №258" }] },
-    { fullName: "Теплухова Ксения Игоревна", exams: [{ subject: "Математика", date: "2026-06-02", place: "ГБОУ гимназия №446" }, { subject: "Обществознание", date: "2026-06-05", place: "ГБОУ гимназия №446" }, { subject: "Русский язык", date: "2026-06-09", place: "ГБОУ гимназия №446" }, { subject: "Информатика", date: "2026-06-16", place: "ГБОУ СОШ №258" }] },
-    { fullName: "Федорова Софья Антоновна", exams: [{ subject: "Математика", date: "2026-06-02", place: "ГБОУ гимназия №446" }, { subject: "Английский язык", date: "2026-06-05", place: "ГБОУ гимназия №446" }, { subject: "Английский язык (устный)", date: "2026-06-06", place: "ГБОУ гимназия №446" }, { subject: "Русский язык", date: "2026-06-09", place: "ГБОУ гимназия №446" }, { subject: "Обществознание", date: "2026-06-16", place: "ГБОУ СОШ №258" }] },
-    { fullName: "Филиппова Алиса Михайловна", exams: [{ subject: "Математика", date: "2026-06-02", place: "ГБОУ гимназия №446" }, { subject: "Химия", date: "2026-06-05", place: "ГБОУ СОШ №258" }, { subject: "Русский язык", date: "2026-06-09", place: "ГБОУ гимназия №446" }, { subject: "Биология", date: "2026-06-16", place: "ГБОУ СОШ №258" }] },
-    { fullName: "Фомичева Руслана Николаевна", exams: [{ subject: "Математика", date: "2026-06-02", place: "ГБОУ гимназия №446" }, { subject: "Английский язык", date: "2026-06-05", place: "ГБОУ гимназия №446" }, { subject: "Английский язык (устный)", date: "2026-06-06", place: "ГБОУ гимназия №446" }, { subject: "Русский язык", date: "2026-06-09", place: "ГБОУ гимназия №446" }, { subject: "География", date: "2026-06-16", place: "ГБОУ СОШ №258" }] },
-    { fullName: "Шалаевская Ангелина Михайловна", exams: [{ subject: "Математика", date: "2026-06-02", place: "ГБОУ гимназия №446" }, { subject: "География", date: "2026-06-05", place: "ГБОУ гимназия №446" }, { subject: "Русский язык", date: "2026-06-09", place: "ГБОУ гимназия №446" }, { subject: "Обществознание", date: "2026-06-16", place: "ГБОУ СОШ №258" }] },
-    { fullName: "Шустов Иван Алексеевич", exams: [{ subject: "Математика", date: "2026-06-02", place: "ГБОУ гимназия №446" }, { subject: "Химия", date: "2026-06-05", place: "ГБОУ СОШ №258" }, { subject: "Русский язык", date: "2026-06-09", place: "ГБОУ гимназия №446" }, { subject: "Информатика", date: "2026-06-16", place: "ГБОУ СОШ №258" }] },
-    { fullName: "Щавелев Андрей Егорович", exams: [{ subject: "Математика", date: "2026-06-02", place: "ГБОУ гимназия №446" }, { subject: "Физика", date: "2026-06-05", place: "ГБОУ СОШ №258" }, { subject: "Русский язык", date: "2026-06-09", place: "ГБОУ гимназия №446" }, { subject: "Информатика", date: "2026-06-16", place: "ГБОУ СОШ №258" }] },
-    { fullName: "Щавелев Илья Егорович", exams: [{ subject: "Математика", date: "2026-06-02", place: "ГБОУ гимназия №446" }, { subject: "Физика", date: "2026-06-05", place: "ГБОУ СОШ №258" }, { subject: "Русский язык", date: "2026-06-09", place: "ГБОУ гимназия №446" }, { subject: "Информатика", date: "2026-06-16", place: "ГБОУ СОШ №258" }] }
+  const P1 = "ГБОУ гимназия №446", P2 = "ГБОУ СОШ №258";
+  const EX = {
+    M:   { f: "Математика", d: "2026-06-02", p: P1 },
+    R:   { f: "Русский язык", d: "2026-06-09", p: P1 },
+    G5:  { f: "География", d: "2026-06-05", p: P1 },
+    G16: { f: "География", d: "2026-06-16", p: P2 },
+    I16: { f: "Информатика", d: "2026-06-16", p: P2 },
+    B5:  { f: "Биология", d: "2026-06-05", p: P1 },
+    B16: { f: "Биология", d: "2026-06-16", p: P2 },
+    O5:  { f: "Обществознание", d: "2026-06-05", p: P1 },
+    O16: { f: "Обществознание", d: "2026-06-16", p: P2 },
+    E5:  { f: "Английский (письм.)", d: "2026-06-05", p: P1 },
+    E6:  { f: "Английский (устн.)", d: "2026-06-06", p: P1 },
+    C5:  { f: "Химия", d: "2026-06-05", p: P2 },
+    C16: { f: "Химия", d: "2026-06-16", p: P2 },
+    F5:  { f: "Физика", d: "2026-06-05", p: P2 }
+  };
+  const rawData = [
+    ["Балабин Михаил Васильевич", "M,G5,R,I16"],
+    ["Басалаева Диана Захаровна", "M,G5,R,O16"],
+    ["Берсудская Валерия Константиновна", "M,B5,R,I16"],
+    ["Благов Максим Антонович", "M,G5,R,I16"],
+    ["Васильев Михаил Сергеевич", "M,E5,E6,R,I16"],
+    ["Зыкова Милана Дмитриевна", "M,E5,E6,R,O16"],
+    ["Клочков Роман Борисович", "M,E5,E6,R,I16"],
+    ["Козлова Александра Евгеньевна", "M,E5,E6,R,G16"],
+    ["Козлова Кира Евгеньевна", "M,E5,E6,R,G16"],
+    ["Копылова Мария Александровна", "M,G5,R,B16"],
+    ["Люйк Даниил Александрович", "M,E5,E6,R,C16"],
+    ["Мещанинов Никита Алексеевич", "M,C5,R,B16"],
+    ["Михеева Татьяна Викторовна", "M,B5,R,I16"],
+    ["Назаров Владимир Николаевич", "M,O5,R,I16"],
+    ["Песков Андрей Дмитриевич", "M,C5,R,B16"],
+    ["Смирнов Александр Максимович", "M,E5,E6,R,B16"],
+    ["Соловьев Егор Алексеевич", "M,G5,R,B16"],
+    ["Теплухова Ксения Игоревна", "M,O5,R,I16"],
+    ["Федорова Софья Антоновна", "M,E5,E6,R,O16"],
+    ["Филиппова Алиса Михайловна", "M,C5,R,B16"],
+    ["Фомичева Руслана Николаевна", "M,E5,E6,R,G16"],
+    ["Шалаевская Ангелина Михайловна", "M,G5,R,O16"],
+    ["Шустов Иван Алексеевич", "M,C5,R,I16"],
+    ["Щавелев Андрей Егорович", "M,F5,R,I16"],
+    ["Щавелев Илья Егорович", "M,F5,R,I16"]
   ];
-
-  const searchInput = document.getElementById('searchInput');
+  const data = rawData.map(([fullName, keys], index) => ({ id: index + 1, fullName, exams: keys.split(',').map(k => EX[k]) }));
   const grid = document.getElementById('studentsGrid');
-
-  function getTimeRemaining(targetDate) {
-    const now = new Date();
-    const target = new Date(targetDate);
-    target.setHours(9, 0, 0, 0);
-    const diff = target - now;
-    if (diff <= 0) return { expired: true, text: "ЗАВЕРШЕНО ✓" };
-    
-    const days = Math.floor(diff / 86400000);
-    const hours = Math.floor((diff % 86400000) / 3600000);
-    const minutes = Math.floor((diff % 3600000) / 60000);
-    const seconds = Math.floor((diff % 60000) / 1000);
-    return { expired: false, text: `${days}д ${hours}ч ${minutes}м ${seconds}с` };
-  }
-
-  function formatDate(dateStr) {
-    const parts = dateStr.split('-');
-    return `${parts[2]}.${parts[1]}.${parts[0]}`;
-  }
-
-  function render() {
-    const query = searchInput.value.toLowerCase();
-    const filtered = studentsData.filter(s => s.fullName.toLowerCase().includes(query));
-    
-    grid.innerHTML = filtered.map(student => `
-      <div class="student-card">
-        <div class="student-header">
-          <div class="student-name">${student.fullName}</div>
-          <div class="student-class">9В • ГИА-9</div>
+  const search = document.getElementById('searchInput');
+  const getTimer = d => {
+    let diff = new Date(d).setHours(9,0,0,0) - new Date();
+    if (diff <= 0) return { exp: 'expired', txt: "ЗАВЕРШЕНО" };
+    let f = n => Math.floor(n);
+    return { exp: '', txt: `${f(diff/86400000)}д ${f((diff%86400000)/3600000)}ч ${f((diff%3600000)/60000)}м` };
+  };
+  const renderStats = () => {
+    const container = document.getElementById('statsContainer');
+    const counts = {};
+    data.forEach(s => {
+      const unique = new Set(s.exams.map(e => e.f.split(' (')[0]));
+      unique.forEach(ex => counts[ex] = (counts[ex] || 0) + 1);
+    });
+    const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+    const max = Math.max(...Object.values(counts));
+    container.innerHTML = sorted.map(([name, count]) => `
+      <div class="stat-row">
+        <div class="stat-info"><span class="stat-label">${name}</span><span class="stat-count">${count}</span></div>
+        <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: ${(count/max)*100}%"></div></div>
+      </div>`).join('');
+  };
+  const render = () => {
+    const q = search.value.toLowerCase();
+    const opened = Array.from(document.querySelectorAll('details[open]')).map(d => d.dataset.name);
+    grid.innerHTML = data.filter(s => s.fullName.toLowerCase().includes(q)).map(s => `
+      <details class="student-details" data-name="${s.fullName}" ${opened.includes(s.fullName) ? 'open' : ''}>
+        <summary class="student-summary">
+          <div class="name-block"><span class="student-num">${String(s.id).padStart(2, '0')}</span><span class="student-name">${s.fullName}</span></div>
+          <div class="expand-icon">▼</div>
+        </summary>
+        <div class="exam-list">
+          ${s.exams.map(e => {
+            let tmr = getTimer(e.d);
+            return `<div class="exam-item">
+              <div><div class="exam-name">${e.f}</div><div class="exam-date">${e.d.split('-').reverse().join('.')}</div><div class="exam-place">${e.p}</div></div>
+              <div class="timer ${tmr.exp}">${tmr.txt}</div>
+            </div>`;
+          }).join('')}
         </div>
-        ${student.exams.map(exam => {
-          const timer = getTimeRemaining(exam.date);
-          return `
-            <div class="exam-item">
-              <div>
-                <div class="exam-name">${exam.subject}</div>
-                <div class="exam-date">${formatDate(exam.date)}</div>
-                <div class="exam-place">${exam.place}</div>
-              </div>
-              <div class="timer ${timer.expired ? 'expired' : ''}">${timer.text}</div>
-            </div>
-          `;
-        }).join('')}
-      </div>
-    `).join('');
-  }
-
-  searchInput.addEventListener('input', render);
-  
-  const themeToggle = document.getElementById('themeToggle');
-  themeToggle.addEventListener('click', () => {
-    const isDark = document.body.getAttribute('data-theme') === 'dark';
-    const next = isDark ? 'light' : 'dark';
-    document.body.setAttribute('data-theme', next);
-    themeToggle.textContent = isDark ? 'DARK' : 'LIGHT';
-    localStorage.setItem('theme', next);
-  });
-
-  const saved = localStorage.getItem('theme') || 'dark';
-  document.body.setAttribute('data-theme', saved);
-  themeToggle.textContent = saved === 'dark' ? 'LIGHT' : 'DARK';
+      </details>`).join('');
+  };
+  search.addEventListener('input', render);
+  const tgl = document.getElementById('themeToggle');
+  const setTheme = d => {
+    document.body.setAttribute('data-theme', d);
+    tgl.textContent = d === 'dark' ? 'LIGHT' : 'DARK';
+    localStorage.setItem('theme', d);
+  };
+  tgl.addEventListener('click', () => setTheme(document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
+  setTheme(localStorage.getItem('theme') || 'dark');
   document.getElementById('year').textContent = new Date().getFullYear();
-
-  setInterval(render, 1000);
+  setInterval(render, 60000);
   render();
+  renderStats();
 </script>
 </body>
 </html>
