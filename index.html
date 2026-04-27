@@ -59,11 +59,11 @@
     .exam-place { font-size: 0.65rem; color: var(--muted); margin-top: 2px; }
     .timer { font-size: 0.7rem; color: var(--green); background: var(--timer-bg); padding: 3px 8px; border-radius: 4px; min-width: 100px; text-align: center; }
     .timer.expired { color: var(--muted); }
-    .stats-container { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+    .stats-container { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 16px; margin-bottom: 20px;}
     .stat-row { display: flex; flex-direction: column; gap: 6px; }
     .stat-info { display: flex; justify-content: space-between; font-size: 0.75rem; }
-    .stat-bar-bg { height: 6px; background: var(--timer-bg); border-radius: 3px; overflow: hidden; position: relative; }
-    .stat-bar-fill { height: 100%; background: var(--sun); border-radius: 3px; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); min-width: 2px; }
+    .stat-bar-bg { height: 8px; background: var(--timer-bg); border-radius: 4px; overflow: hidden; width: 100%; }
+    .stat-bar-fill { height: 100%; background-color: #FFD166; border-radius: 4px; min-width: 4px; display: block; }
     .stat-count { color: var(--bright); font-weight: 600; }
     footer { border-top: 1px solid var(--border); padding: 24px 0; margin-top: 40px; }
     .footer-inner { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--muted); }
@@ -81,7 +81,7 @@
   </div>
   <section id="hero">
     <div class="badge">✦ ГИА-9 • 2026</div>
-    <h1 class="hero-name">Расписание ОГЭ 2026 — 9«В»</h1>
+    <h1 class="hero-name">Экзамены 9«В»</h1>
     <div class="students-grid" id="studentsGrid"></div>
   </section>
   <section id="stats">
@@ -91,7 +91,7 @@
   <footer>
     <div class="footer-inner">
       <span>© <span id="year"></span> LiDECX</span>
-      <span>v2.8.0</span>
+      <span>v2.9.0</span>
     </div>
   </footer>
 </div>
@@ -157,7 +157,7 @@
       unique.forEach(ex => counts[ex] = (counts[ex] || 0) + 1);
     });
     const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
-    const max = Math.max(...Object.values(counts));
+    const max = 25; 
     container.innerHTML = sorted.map(([name, count]) => `
       <div class="stat-row">
         <div class="stat-info"><span class="stat-label">${name}</span><span class="stat-count">${count}</span></div>
