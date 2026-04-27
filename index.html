@@ -57,7 +57,7 @@
     .exam-name { color: var(--accent); font-size: 0.8rem; font-weight: 500; }
     .exam-date { font-size: 0.65rem; color: var(--sun); }
     .exam-place { font-size: 0.65rem; color: var(--muted); margin-top: 2px; }
-    .timer { font-size: 0.7rem; color: var(--green); background: var(--timer-bg); padding: 3px 8px; border-radius: 4px; min-width: 100px; text-align: center; }
+    .timer { font-size: 0.7rem; color: var(--green); background: var(--timer-bg); padding: 3px 8px; border-radius: 4px; min-width: 125px; text-align: center; }
     .timer.expired { color: var(--muted); }
     .stats-container { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 18px; margin-bottom: 20px;}
     .stat-row { display: flex; flex-direction: column; gap: 8px; }
@@ -91,7 +91,7 @@
   <footer>
     <div class="footer-inner">
       <span>© <span id="year"></span> LiDECX</span>
-      <span>v2.9.1</span>
+      <span>v2.9.2</span>
     </div>
   </footer>
 </div>
@@ -147,7 +147,8 @@
     let diff = new Date(d).setHours(9,0,0,0) - new Date();
     if (diff <= 0) return { exp: 'expired', txt: "ЗАВЕРШЕНО" };
     let f = n => Math.floor(n);
-    return { exp: '', txt: `${f(diff/86400000)}д ${f((diff%86400000)/3600000)}ч ${f((diff%3600000)/60000)}м` };
+    let s = f((diff % 60000) / 1000);
+    return { exp: '', txt: `${f(diff/86400000)}д ${f((diff%86400000)/3600000)}ч ${f((diff%3600000)/60000)}м ${s}с` };
   };
   const renderStats = () => {
     const container = document.getElementById('statsContainer');
@@ -163,9 +164,7 @@
       return `
       <div class="stat-row">
         <div class="stat-info"><span class="stat-label">${name}</span><span class="stat-count">${count}</span></div>
-        <div class="stat-bar-bg">
-          <div class="stat-bar-fill" style="width: ${percent}%"></div>
-        </div>
+        <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: ${percent}%"></div></div>
       </div>`;
     }).join('');
   };
@@ -199,7 +198,7 @@
   tgl.addEventListener('click', () => setTheme(document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
   setTheme(localStorage.getItem('theme') || 'dark');
   document.getElementById('year').textContent = new Date().getFullYear();
-  setInterval(render, 60000);
+  setInterval(render, 1000);
   render();
   renderStats();
 </script>
