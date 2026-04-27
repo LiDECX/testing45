@@ -59,11 +59,11 @@
     .exam-place { font-size: 0.65rem; color: var(--muted); margin-top: 2px; }
     .timer { font-size: 0.7rem; color: var(--green); background: var(--timer-bg); padding: 3px 8px; border-radius: 4px; min-width: 100px; text-align: center; }
     .timer.expired { color: var(--muted); }
-    .stats-container { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 16px; margin-bottom: 20px;}
-    .stat-row { display: flex; flex-direction: column; gap: 6px; }
+    .stats-container { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 18px; margin-bottom: 20px;}
+    .stat-row { display: flex; flex-direction: column; gap: 8px; }
     .stat-info { display: flex; justify-content: space-between; font-size: 0.75rem; }
-    .stat-bar-bg { height: 8px; background: var(--timer-bg); border-radius: 4px; overflow: hidden; width: 100%; }
-    .stat-bar-fill { height: 100%; background-color: #FFD166; border-radius: 4px; min-width: 4px; display: block; }
+    .stat-bar-bg { height: 8px; background: var(--timer-bg); border-radius: 4px; width: 100%; display: flex; }
+    .stat-bar-fill { height: 100%; background: #FFD166 !important; border-radius: 4px; min-width: 5px; transition: width 1s ease; }
     .stat-count { color: var(--bright); font-weight: 600; }
     footer { border-top: 1px solid var(--border); padding: 24px 0; margin-top: 40px; }
     .footer-inner { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--muted); }
@@ -91,7 +91,7 @@
   <footer>
     <div class="footer-inner">
       <span>© <span id="year"></span> LiDECX</span>
-      <span>v2.9.0</span>
+      <span>v2.9.1</span>
     </div>
   </footer>
 </div>
@@ -157,12 +157,17 @@
       unique.forEach(ex => counts[ex] = (counts[ex] || 0) + 1);
     });
     const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
-    const max = 25; 
-    container.innerHTML = sorted.map(([name, count]) => `
+    const maxVal = 25; 
+    container.innerHTML = sorted.map(([name, count]) => {
+      const percent = (count / maxVal) * 100;
+      return `
       <div class="stat-row">
         <div class="stat-info"><span class="stat-label">${name}</span><span class="stat-count">${count}</span></div>
-        <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: ${(count/max)*100}%"></div></div>
-      </div>`).join('');
+        <div class="stat-bar-bg">
+          <div class="stat-bar-fill" style="width: ${percent}%"></div>
+        </div>
+      </div>`;
+    }).join('');
   };
   const render = () => {
     const q = search.value.toLowerCase();
