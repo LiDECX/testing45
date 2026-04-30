@@ -57,7 +57,7 @@
     .exam-name { color: var(--accent); font-size: 0.8rem; font-weight: 500; }
     .exam-date { font-size: 0.65rem; color: var(--sun); }
     .exam-place { font-size: 0.65rem; color: var(--muted); margin-top: 2px; }
-    .timer { font-size: 0.7rem; color: var(--green); background: var(--timer-bg); padding: 3px 8px; border-radius: 4px; min-width: 125px; text-align: center; }
+    .timer { font-size: 0.7rem; color: var(--green); background: var(--timer-bg); padding: 3px 8px; border-radius: 4px; min-width: 130px; text-align: center; }
     .timer.expired { color: var(--muted); }
     .stats-container { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 18px; margin-bottom: 20px;}
     .stat-row { display: flex; flex-direction: column; gap: 8px; }
@@ -91,7 +91,7 @@
   <footer>
     <div class="footer-inner">
       <span>© <span id="year"></span> LiDECX</span>
-      <span>v2.9.2</span>
+      <span>v3.0.0</span>
     </div>
   </footer>
 </div>
@@ -144,7 +144,7 @@
   const grid = document.getElementById('studentsGrid');
   const search = document.getElementById('searchInput');
   const getTimer = d => {
-    let diff = new Date(d).setHours(9,0,0,0) - new Date();
+    let diff = new Date(d).setHours(10,0,0,0) - new Date();
     if (diff <= 0) return { exp: 'expired', txt: "ЗАВЕРШЕНО" };
     let f = n => Math.floor(n);
     let s = f((diff % 60000) / 1000);
