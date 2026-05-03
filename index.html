@@ -1,1 +1,275 @@
-Пока не требуется проводить тестирование.🤷
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Крестики-Нолики</title>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:Arial;background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px}
+        .container{background:white;border-radius:15px;box-shadow:0 20px 60px rgba(0,0,0,.3);padding:30px;max-width:450px;width:100%}
+        h1{text-align:center;color:#333;margin-bottom:20px}
+        input,button{width:100%;padding:12px;border:2px solid #ddd;border-radius:8px;font-size:14px;margin-bottom:10px}
+        button{background:#667eea;color:white;border:none;cursor:pointer;font-weight:600}
+        button:hover{background:#5568d3}
+        .hidden{display:none!important}
+        .board{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:20px 0}
+        .cell{aspect-ratio:1;font-size:32px;font-weight:bold;background:white;border:2px solid #ddd;border-radius:8px;cursor:pointer}
+        .cell:hover{background:#f0f0f0;border-color:#667eea}
+        .x{color:#3498db}
+        .o{color:#e74c3c}
+        .msg{text-align:center;color:#333;margin:15px 0;font-weight:600;font-size:16px}
+        .code-box{background:#f8f9fa;border:2px dashed #667eea;padding:15px;border-radius:8px;text-align:center;margin:20px 0}
+        .code-text{font-size:24px;font-weight:bold;color:#667eea;font-family:monospace;letter-spacing:2px}
+        .status{text-align:center;color:#666;margin-bottom:15px;font-size:13px}
+        .status.ok{color:#27ae60;font-weight:bold}
+        .status.wait{color:#f39c12;font-weight:bold}
+        .status.err{color:#e74c3c;font-weight:bold}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Крестики-Нолики</h1>
+        <div class="status" id="status"></div>
+
+        <div id="menu">
+            <h3 style="margin-bottom:15px">Новая игра</h3>
+            <input type="text" id="name1" placeholder="Ваше имя" maxlength="12">
+            <button onclick="create()">Создать</button>
+
+            <h3 style="margin-top:30px;margin-bottom:15px">Присоединиться</h3>
+            <input type="text" id="code" placeholder="Код игры" maxlength="6">
+            <input type="text" id="name2" placeholder="Ваше имя" maxlength="12">
+            <button onclick="join()">Войти</button>
+        </div>
+
+        <div id="codeSection" class="hidden">
+            <div class="code-box">
+                <div style="font-size:12px;color:#999;margin-bottom:8px">КОД ИГРЫ</div>
+                <div class="code-text" id="codeDisplay"></div>
+                <button onclick="copyCode()" style="margin-top:10px;background:#27ae60">📋 Копировать</button>
+            </div>
+            <div style="text-align:center;color:#999">⏳ Ожидание игрока...</div>
+        </div>
+
+        <div id="gameArea" class="hidden">
+            <div style="display:flex;justify-content:space-around;margin-bottom:20px;text-align:center">
+                <div><div style="font-size:28px;color:#3498db">✕</div><div id="p1" style="font-size:12px;color:#666"></div></div>
+                <div style="color:#ccc;font-size:20px">VS</div>
+                <div><div style="font-size:28px;color:#e74c3c">◯</div><div id="p2" style="font-size:12px;color:#666"></div></div>
+            </div>
+
+            <div class="msg" id="turn"></div>
+            <div class="msg" id="msg"></div>
+
+            <div class="board" id="board">
+                <button class="cell" onclick="move(0)"></button>
+                <button class="cell" onclick="move(1)"></button>
+                <button class="cell" onclick="move(2)"></button>
+                <button class="cell" onclick="move(3)"></button>
+                <button class="cell" onclick="move(4)"></button>
+                <button class="cell" onclick="move(5)"></button>
+                <button class="cell" onclick="move(6)"></button>
+                <button class="cell" onclick="move(7)"></button>
+                <button class="cell" onclick="move(8)"></button>
+            </div>
+
+            <button onclick="reset()">Новая игра</button>
+            <button onclick="menu()" style="background:#95a5a6">В меню</button>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAB_CDEFGHIJKLMNOPQRSTUVWXYZabcdef",
+            projectId: "tictactoe-game-2024",
+            databaseURL: "https://tictactoe-game-2024-default-rtdb.firebaseio.com"
+        };
+
+        let db, g = {
+            id: null, pid: null, name: null, board: Array(9).fill(''),
+            turn: 'X', over: false, sym: null, opp: null, ref: null
+        };
+
+        const w = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+
+        try {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.database();
+            setStatus("✓ Онлайн", "ok");
+        } catch(e) {
+            setStatus("⚠ Ошибка Firebase", "err");
+        }
+
+        function setStatus(msg, type) {
+            const s = document.getElementById("status");
+            s.textContent = msg;
+            s.className = "status " + type;
+        }
+
+        function create() {
+            const n = document.getElementById("name1").value.trim();
+            if(!n) { alert("Введите имя"); return; }
+
+            g.id = Math.random().toString(36).slice(2,8).toUpperCase();
+            g.pid = "p"+Date.now();
+            g.name = n;
+            g.sym = 'X';
+            g.board = Array(9).fill('');
+            g.turn = 'X';
+            g.over = false;
+
+            document.getElementById("menu").classList.add("hidden");
+            document.getElementById("codeSection").classList.remove("hidden");
+            document.getElementById("codeDisplay").textContent = g.id;
+            document.getElementById("p1").textContent = n;
+            document.getElementById("p2").textContent = "⏳";
+
+            setStatus("Ожидание...", "wait");
+
+            if(db) {
+                g.ref = db.ref("games/" + g.id);
+                g.ref.set({
+                    p1: n,
+                    p2: null,
+                    board: g.board,
+                    turn: 'X',
+                    over: false,
+                    created: Date.now()
+                });
+
+                g.ref.on('value', snap => {
+                    if(!snap.exists()) return;
+                    const data = snap.val();
+                    if(data.p2) {
+                        g.opp = data.p2;
+                        document.getElementById("p2").textContent = data.p2;
+                        if(data.status === 'playing') start();
+                    }
+                    if(data.status === 'playing') {
+                        g.board = data.board;
+                        g.turn = data.turn;
+                        g.over = data.over;
+                        draw();
+                        upd();
+                    }
+                });
+            }
+        }
+
+        function join() {
+            const c = document.getElementById("code").value.trim().toUpperCase();
+            const n = document.getElementById("name2").value.trim();
+            if(!c || c.length !== 6) { alert("Неверный код"); return; }
+            if(!n) { alert("Введите имя"); return; }
+
+            g.id = c;
+            g.pid = "p"+Date.now();
+            g.name = n;
+            g.sym = 'O';
+            g.board = Array(9).fill('');
+            g.turn = 'X';
+            g.over = false;
+
+            document.getElementById("menu").classList.add("hidden");
+            setStatus("Подключение...", "wait");
+
+            if(db) {
+                g.ref = db.ref("games/" + c);
+                g.ref.once('value', snap => {
+                    if(!snap.exists()) {
+                        setStatus("❌ Игра не найдена", "err");
+                        setTimeout(() => document.getElementById("menu").classList.remove("hidden"), 2000);
+                        return;
+                    }
+                    const data = snap.val();
+                    g.opp = data.p1;
+                    document.getElementById("p1").textContent = data.p1;
+                    document.getElementById("p2").textContent = n;
+
+                    g.ref.update({ p2: n, status: 'playing' });
+                    start();
+
+                    g.ref.on('value', snap => {
+                        if(!snap.exists()) return;
+                        const data = snap.val();
+                        g.board = data.board;
+                        g.turn = data.turn;
+                        g.over = data.over;
+                        draw();
+                        upd();
+                    });
+                });
+            }
+        }
+
+        function start() {
+            document.getElementById("codeSection").classList.add("hidden");
+            document.getElementById("gameArea").classList.remove("hidden");
+            setStatus("✓ Игра началась", "ok");
+            draw();
+            upd();
+        }
+
+        function move(i) {
+            if(g.over || g.board[i] !== '' || g.turn !== g.sym) return;
+            
+            g.board[i] = g.sym;
+            const win = w.find(x => x.every(j => g.board[j] === g.sym));
+            
+            if(win) {
+                g.over = true;
+                document.getElementById("msg").textContent = "🎉 Вы выиграли!";
+            } else if(g.board.every(x => x)) {
+                g.over = true;
+                document.getElementById("msg").textContent = "🤝 Ничья!";
+            } else {
+                g.turn = g.turn === 'X' ? 'O' : 'X';
+            }
+
+            if(g.ref) {
+                g.ref.update({ board: g.board, turn: g.turn, over: g.over });
+            }
+            draw();
+            upd();
+        }
+
+        function draw() {
+            document.querySelectorAll(".cell").forEach((c, i) => {
+                c.textContent = g.board[i] === 'X' ? '✕' : (g.board[i] === 'O' ? '◯' : '');
+                c.className = 'cell ' + (g.board[i] === 'X' ? 'x' : (g.board[i] === 'O' ? 'o' : ''));
+                c.disabled = g.over || g.board[i] !== '' || g.turn !== g.sym;
+            });
+        }
+
+        function upd() {
+            document.getElementById("turn").textContent = g.over ? "" : (g.turn === g.sym ? "Ваш ход ✓" : "Ход противника ⏳");
+        }
+
+        function reset() {
+            g.board = Array(9).fill('');
+            g.turn = 'X';
+            g.over = false;
+            document.getElementById("msg").textContent = '';
+            if(g.ref) g.ref.update({ board: g.board, turn: 'X', over: false });
+            draw();
+            upd();
+        }
+
+        function menu() {
+            document.getElementById("gameArea").classList.add("hidden");
+            document.getElementById("codeSection").classList.add("hidden");
+            document.getElementById("menu").classList.remove("hidden");
+            if(g.ref) g.ref.off();
+            setStatus("✓ Онлайн", "ok");
+        }
+
+        function copyCode() {
+            navigator.clipboard.writeText(g.id);
+            alert("✓ Код скопирован!");
+        }
+    </script>
+</body>
+</html>
