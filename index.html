@@ -84,6 +84,10 @@
     @keyframes crtFlicker {
       0% { opacity: 0.02; } 50% { opacity: 0.05; } 100% { opacity: 0.02; }
     }
+    @keyframes legTwitch {
+      0%, 100% { transform: rotate(0deg); }
+      50% { transform: rotate(3deg); }
+    }
 
     body { 
       background: var(--bg); 
@@ -111,7 +115,8 @@
       transform-origin: top center;
     }
 
-    .spider-container { position: fixed; z-index: 1003; filter: drop-shadow(0 5px 8px #000); }
+    .spider-container { position: fixed; z-index: 1003; filter: drop-shadow(0 2px 5px #000); }
+    .spider-svg { animation: legTwitch 0.2s infinite alternate ease-in-out; }
     
     .scary-smile-mega {
       position: fixed; top: 50%; left: 50%; width: 80vw; max-width: 800px;
@@ -284,17 +289,24 @@
 
       let dblClickTimer = null;
       let horrorIntervals = [];
-      const glitchWords = [
-        "ERROR", "FATAL", "DEATH", "RUN", "0xDEAD", "666", "SYSTEM FAILURE", 
-        "BLOOD", "NO ESCAPE", "HELP ME", "VOID", "CORRUPTED", "KILL", 
-        "SACRIFICE", "NIGHTMARE", "YOUR SOUL", "HELL", "ABYSS", "WATCHING", 
-        "STALKER", "EYES", "SMILE", "I SEE YOU", "NO PRIVACY", "WE OWN YOU"
-      ];
+      const glitchWords = ["ERROR", "FATAL", "DEATH", "RUN", "0xDEAD", "666", "SYSTEM FAILURE", "BLOOD", "VOID", "KILL", "ABYSS", "EYES", "SMILE", "I SEE YOU"];
 
-      function initTheme() {
+      function syncStates() {
         const savedTheme = localStorage.getItem('site-theme') || 'dark';
+        const isBlood = localStorage.getItem('site-mode') === 'blood';
+        
         body.setAttribute('data-theme', savedTheme);
-        themeToggle.textContent = savedTheme === 'dark' ? 'LIGHT' : 'DARK';
+        if (isBlood) {
+          if (!body.classList.contains('blood-mode')) body.classList.add('blood-mode');
+          themeToggle.textContent = "DIE";
+          heroSub.innerText = 'КОНФИДЕНЦИАЛЬНОСТИ НЕТ. МЫ ВИДИМ ВСЁ.';
+          if (!horrorIntervals.length) startMeat();
+        } else {
+          body.classList.remove('blood-mode');
+          stopMeat();
+          heroSub.innerText = heroSub.getAttribute('data-orig');
+          themeToggle.textContent = savedTheme === 'dark' ? 'LIGHT' : 'DARK';
+        }
         updateSliderTrack();
       }
 
@@ -309,40 +321,27 @@
         if (dblClickTimer) {
           clearTimeout(dblClickTimer);
           dblClickTimer = null;
-          body.classList.toggle('blood-mode');
-          if (body.classList.contains('blood-mode')) {
-            themeToggle.textContent = "DIE";
-            heroSub.setAttribute('data-orig', 'КОНФИДЕНЦИАЛЬНОСТИ НЕТ. МЫ ВИДИМ ВСЁ.');
-            heroSub.textContent = 'КОНФИДЕНЦИАЛЬНОСТИ НЕТ. МЫ ВИДИМ ВСЁ.';
-            badge.innerText = `✦ ${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`;
-            startMeat();
-          } else {
-            stopMeat();
-            heroSub.setAttribute('data-orig', 'Генератор паролей. Полная конфиденциальность.');
-            heroSub.textContent = 'Генератор паролей. Полная конфиденциальность.';
-            badge.innerText = badge.getAttribute('data-orig');
-            const isDark = body.getAttribute('data-theme') === 'dark';
-            themeToggle.textContent = isDark ? 'LIGHT' : 'DARK';
-          }
-          updateSliderTrack();
-          generatePassword();
+          const willBeBlood = !body.classList.contains('blood-mode');
+          localStorage.setItem('site-mode', willBeBlood ? 'blood' : 'normal');
+          syncStates();
           return;
         }
         dblClickTimer = setTimeout(() => {
           if (!body.classList.contains('blood-mode')) {
-            const isDark = body.getAttribute('data-theme') === 'dark';
-            const newTheme = isDark ? 'light' : 'dark';
-            body.setAttribute('data-theme', newTheme);
+            const newTheme = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
             localStorage.setItem('site-theme', newTheme);
-            themeToggle.textContent = isDark ? 'DARK' : 'LIGHT';
-            updateSliderTrack();
-            generatePassword();
+            syncStates();
           }
           dblClickTimer = null;
         }, 250);
       });
 
+      window.addEventListener('storage', (e) => {
+        if (e.key === 'site-theme' || e.key === 'site-mode') syncStates();
+      });
+
       function startMeat() {
+        stopMeat();
         const dropTimer = setInterval(() => {
           const drop = document.createElement('div');
           drop.className = 'blood-drip';
@@ -355,18 +354,16 @@
         }, 150);
         horrorIntervals.push(dropTimer);
 
-        const textNodes = document.querySelectorAll('[data-orig]');
         const textTimer = setInterval(() => {
           if (Math.random() > 0.4) {
+            const textNodes = document.querySelectorAll('[data-orig]');
             const el = textNodes[Math.floor(Math.random() * textNodes.length)];
             const orig = el.getAttribute('data-orig');
             el.innerText = glitchWords[Math.floor(Math.random() * glitchWords.length)];
             el.style.color = '#f00';
             setTimeout(() => { el.innerText = orig; el.style.color = ''; }, 150);
           }
-          if(body.classList.contains('blood-mode') && Math.random() > 0.95) {
-             badge.innerText = `✦ ${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`;
-          }
+          badge.innerText = `✦ ${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`;
         }, 250);
         horrorIntervals.push(textTimer);
 
@@ -374,20 +371,23 @@
         for (let i = 0; i < 4; i++) {
           const s = document.createElement('div');
           s.className = 'spider-container';
-          s.style.width = '40px';
-          s.style.height = '40px';
-          s.innerHTML = `<svg viewBox="0 0 100 100" width="100%"><circle cx="50" cy="50" r="15" fill="#000"/><path d="M10 10 L50 50 M90 10 L50 50 M10 90 L50 50 M90 90 L50 50" stroke="#000" stroke-width="6"/><circle cx="43" cy="45" r="3" fill="#f00"/><circle cx="57" cy="45" r="3" fill="#f00"/></svg>`;
+          s.innerHTML = `
+            <svg class="spider-svg" viewBox="0 0 100 100" width="50">
+              <ellipse cx="50" cy="65" rx="10" ry="15" fill="#000"/> <ellipse cx="50" cy="45" rx="7" ry="8" fill="#111"/> <g stroke="#000" stroke-width="2.5" fill="none" stroke-linecap="round">
+                <path d="M43 45 Q30 30 15 40"/><path d="M43 48 Q25 45 10 60"/><path d="M43 52 Q25 65 15 85"/><path d="M45 55 Q35 80 40 95"/>
+                <path d="M57 45 Q70 30 85 40"/><path d="M57 48 Q75 45 90 60"/><path d="M57 52 Q75 65 85 85"/><path d="M55 55 Q65 80 60 95"/>
+              </g>
+              <circle cx="47" cy="42" r="1.5" fill="#f00"/><circle cx="53" cy="42" r="1.5" fill="#f00"/>
+            </svg>`;
           document.getElementById('spidersContainer').appendChild(s);
-          spiders.push({ el: s, x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight, vx: (Math.random() - 0.5) * 4, vy: (Math.random() - 0.5) * 4 });
+          spiders.push({ el: s, x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight, vx: (Math.random() - 0.5) * 3, vy: (Math.random() - 0.5) * 3 });
         }
         const spiderMover = setInterval(() => {
           spiders.forEach(s => {
             s.x += s.vx; s.y += s.vy;
-            if (s.x < 0 || s.x > window.innerWidth - 40) s.vx *= -1;
-            if (s.y < 0 || s.y > window.innerHeight - 40) s.vy *= -1;
-            s.el.style.left = s.x + 'px';
-            s.el.style.top = s.y + 'px';
-            s.el.style.transform = `rotate(${Math.atan2(s.vy, s.vx) * 180 / Math.PI + 90}deg)`;
+            if (s.x < -50 || s.x > window.innerWidth) s.vx *= -1;
+            if (s.y < -50 || s.y > window.innerHeight) s.vy *= -1;
+            s.el.style.transform = `translate(${s.x}px, ${s.y}px) rotate(${Math.atan2(s.vy, s.vx) * 180 / Math.PI + 90}deg)`;
           });
         }, 30);
         horrorIntervals.push(spiderMover);
@@ -399,6 +399,7 @@
         document.getElementById('dropsContainer').innerHTML = '';
         document.getElementById('spidersContainer').innerHTML = '';
         document.querySelectorAll('[data-orig]').forEach(el => { el.innerText = el.getAttribute('data-orig'); el.style.color = ''; });
+        badge.innerText = badge.getAttribute('data-orig');
       }
 
       function generatePassword() {
@@ -408,35 +409,27 @@
         if (document.getElementById('lower').checked) charset += "abcdefghijklmnopqrstuvwxyz";
         if (document.getElementById('numbers').checked) charset += "0123456789";
         if (document.getElementById('symbols').checked) charset += "!@#$%^&*()_+=-";
-        
-        if (!charset) {
-          passwordOutput.textContent = "ВЫБЕРИТЕ ПАРАМЕТРЫ";
-          strengthFill.style.width = "0%";
-          return;
-        }
-        
+        if (!charset) { passwordOutput.textContent = "ВЫБЕРИТЕ ПАРАМЕТРЫ"; strengthFill.style.width = "0%"; return; }
         let pass = "";
         for (let i = 0; i < length; i++) pass += charset[Math.floor(Math.random() * charset.length)];
         passwordOutput.textContent = pass;
-        
         let width = (length / 64) * 100;
         strengthFill.style.width = width + "%";
         if (body.classList.contains('blood-mode')) {
-          strengthFill.style.background = "#f00";
-          strengthText.textContent = "БЕЗНАДЕЖНО";
+          strengthFill.style.background = "#f00"; strengthText.textContent = "БЕЗНАДЕЖНО";
         } else {
           strengthFill.style.background = width < 35 ? "#ef4444" : width < 70 ? "#fbbf24" : "var(--green)";
           strengthText.textContent = width < 35 ? "СЛАБЫЙ" : width < 70 ? "СРЕДНИЙ" : "НАДЁЖНЫЙ";
         }
       }
 
-      function copyPassword() {
+      window.copyPassword = function() {
         navigator.clipboard.writeText(passwordOutput.textContent);
         const btn = document.querySelector('.copy-btn');
         const orig = btn.getAttribute('data-orig');
         btn.textContent = body.classList.contains('blood-mode') ? "УКРАДЕНО" : "DONE";
         setTimeout(() => btn.textContent = orig, 1000);
-      }
+      };
 
       lengthSlider.addEventListener('input', (e) => {
         lengthVal.textContent = e.target.value;
@@ -447,10 +440,9 @@
       document.querySelectorAll('.check-item input').forEach(el => el.addEventListener('change', generatePassword));
       document.getElementById('year').textContent = new Date().getFullYear();
 
-      initTheme();
+      syncStates();
       generatePassword();
       window.generatePassword = generatePassword;
-      window.copyPassword = copyPassword;
     })();
   </script>
 </body>
