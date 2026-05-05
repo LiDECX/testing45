@@ -72,14 +72,9 @@
       40% { opacity: 0.9; transform: scale(1) skew(0deg) translate(-50%, -50%); }
     }
     @keyframes dripViscous {
-      0% { transform: translateY(-100%) scaleX(1); opacity: 1; }
-      100% { transform: translateY(110vh) scaleX(0.5); opacity: 0; }
-    }
-    @keyframes smileBleed {
-      0% { transform: scaleY(0); opacity: 0; }
-      20% { transform: scaleY(1); opacity: 1; }
-      80% { transform: scaleY(3) translateY(10px); opacity: 0.8; }
-      100% { transform: scaleY(4) translateY(20px); opacity: 0; }
+      0% { transform: translateY(-50px) rotate(-45deg) scale(1); opacity: 1; }
+      80% { transform: translateY(80vh) rotate(-45deg) scale(0.8); opacity: 1; }
+      100% { transform: translateY(110vh) rotate(-45deg) scale(0.5); opacity: 0; }
     }
     @keyframes crtFlicker {
       0% { opacity: 0.02; } 50% { opacity: 0.05; } 100% { opacity: 0.02; }
@@ -109,14 +104,17 @@
     }
 
     .blood-drip {
-      position: fixed; top: 0; background: linear-gradient(to bottom, #500 0%, #b00 80%, #f00 100%);
-      z-index: 1002; animation: dripViscous linear forwards;
-      box-shadow: 0 0 10px rgba(255,0,0,0.8);
-      transform-origin: top center;
+      position: fixed; top: 0;
+      background: linear-gradient(135deg, #f00 0%, #700 50%, #200 100%);
+      border-radius: 0 50% 50% 50%;
+      box-shadow: inset -2px -2px 4px rgba(0,0,0,0.6), 0 0 8px rgba(255,0,0,0.8);
+      z-index: 1002; 
+      animation: dripViscous linear forwards;
+      transform-origin: center;
     }
 
-    .spider-container { position: fixed; z-index: 1003; filter: drop-shadow(0 2px 5px #000); }
-    .spider-svg { animation: legTwitch 0.2s infinite alternate ease-in-out; }
+    .spider-container { position: fixed; z-index: 1003; pointer-events: none; }
+    .spider-svg { animation: legTwitch 0.1s infinite alternate ease-in-out; }
     
     .scary-smile-mega {
       position: fixed; top: 50%; left: 50%; width: 80vw; max-width: 800px;
@@ -140,6 +138,7 @@
       cursor: pointer; padding: 6px 12px; border-radius: 6px;
       font-family: 'JetBrains Mono', monospace; font-size: 0.7rem;
       transition: all 0.15s; font-weight: 600;
+      user-select: none;
     }
     body.blood-mode .theme-toggle { 
       border-color: #f00; color: #fff; background: #900; 
@@ -201,19 +200,38 @@
     <div class="scanline"></div>
     <div class="blood-puddle-mega"></div>
     <div class="scary-smile-mega" id="smile">
-      <svg viewBox="0 0 600 400" width="100%" filter="drop-shadow(0 0 30px #f00)">
-        <path d="M50 200 Q300 400 550 200 Q300 230 50 200" fill="#050000" stroke="#200" stroke-width="10"/>
-        <g fill="#e8e8e8" stroke="#300" stroke-width="3">
-          <rect x="150" y="200" width="25" height="40" rx="3"/><rect x="185" y="215" width="25" height="50" rx="3"/>
-          <rect x="220" y="225" width="25" height="55" rx="3"/><rect x="255" y="230" width="25" height="60" rx="3"/>
-          <rect x="290" y="230" width="25" height="60" rx="3"/><rect x="325" y="230" width="25" height="60" rx="3"/>
-          <rect x="360" y="225" width="25" height="55" rx="3"/><rect x="395" y="215" width="25" height="50" rx="3"/>
-          <rect x="430" y="200" width="25" height="40" rx="3"/>
+      <svg viewBox="0 0 600 600" width="100%" filter="drop-shadow(0 0 40px #f00)">
+        <path d="M150 100 Q300 -50 450 100 Q550 300 450 500 Q300 600 150 500 Q50 300 150 100" fill="#030000" stroke="#100" stroke-width="5"/>
+        <ellipse cx="220" cy="250" rx="60" ry="40" fill="#000" transform="rotate(-10 220 250)"/>
+        <ellipse cx="380" cy="250" rx="60" ry="40" fill="#000" transform="rotate(10 380 250)"/>
+        <circle cx="220" cy="250" r="3" fill="#fff" filter="blur(1px)"/>
+        <circle cx="380" cy="250" r="3" fill="#fff" filter="blur(1px)"/>
+        <circle cx="220" cy="250" r="8" fill="#f00" opacity="0.6" filter="blur(3px)"/>
+        <circle cx="380" cy="250" r="8" fill="#f00" opacity="0.6" filter="blur(3px)"/>
+        <path d="M290 320 L300 280 L310 320 Q300 340 290 320" fill="#000"/>
+        <path d="M150 400 Q300 350 450 400 Q300 550 150 400" fill="#000"/>
+        <g fill="#999" stroke="#200" stroke-width="1">
+          <polygon points="170,395 180,420 190,392"/>
+          <polygon points="190,392 205,430 215,388"/>
+          <polygon points="215,388 230,435 245,384"/>
+          <polygon points="245,384 265,440 280,380"/>
+          <polygon points="280,380 300,445 320,380"/>
+          <polygon points="320,380 335,440 355,384"/>
+          <polygon points="355,384 370,435 385,388"/>
+          <polygon points="385,388 395,430 410,392"/>
+          <polygon points="410,392 420,420 430,395"/>
+          <polygon points="180,410 190,380 200,415"/>
+          <polygon points="200,415 215,370 230,425"/>
+          <polygon points="230,425 250,360 270,435"/>
+          <polygon points="270,435 290,350 310,440"/>
+          <polygon points="310,440 330,350 350,435"/>
+          <polygon points="350,435 370,360 385,425"/>
+          <polygon points="385,425 400,370 410,415"/>
         </g>
-        <circle cx="200" cy="100" r="25" fill="#fff"/><circle cx="200" cy="100" r="5" fill="#f00"/>
-        <circle cx="400" cy="100" r="25" fill="#fff"/><circle cx="400" cy="100" r="5" fill="#f00"/>
-        <path d="M265 290 L265 350" stroke="#900" stroke-width="8" stroke-linecap="round" style="animation: smileBleed 1.5s infinite;"/>
-        <path d="M335 290 L335 380" stroke="#b00" stroke-width="10" stroke-linecap="round" style="animation: smileBleed 2.1s infinite 0.7s;"/>
+        <path d="M200 280 Q190 350 200 450" fill="none" stroke="#600" stroke-width="4" stroke-linecap="round"/>
+        <path d="M240 280 Q250 380 230 480" fill="none" stroke="#400" stroke-width="6" stroke-linecap="round"/>
+        <path d="M360 280 Q370 340 360 430" fill="none" stroke="#500" stroke-width="5" stroke-linecap="round"/>
+        <path d="M400 280 Q390 370 400 490" fill="none" stroke="#700" stroke-width="3" stroke-linecap="round"/>
       </svg>
     </div>
     <div id="dropsContainer"></div>
@@ -324,11 +342,19 @@
           const willBeBlood = !body.classList.contains('blood-mode');
           localStorage.setItem('site-mode', willBeBlood ? 'blood' : 'normal');
           syncStates();
+          
+          if (willBeBlood) {
+            setTimeout(() => {
+              alert("I SEE YOU, I'M WATCHING YOU");
+            }, 600);
+          }
           return;
         }
+
         dblClickTimer = setTimeout(() => {
           if (!body.classList.contains('blood-mode')) {
-            const newTheme = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
             localStorage.setItem('site-theme', newTheme);
             syncStates();
           }
@@ -346,12 +372,14 @@
           const drop = document.createElement('div');
           drop.className = 'blood-drip';
           drop.style.left = (Math.random() * 100) + '%';
-          drop.style.width = (Math.random() * 6 + 2) + 'px';
-          const dur = Math.random() * 2 + 1;
+          const size = Math.random() * 10 + 6;
+          drop.style.width = size + 'px';
+          drop.style.height = size + 'px';
+          const dur = Math.random() * 1.5 + 1.2;
           drop.style.animationDuration = dur + 's';
           document.getElementById('dropsContainer').appendChild(drop);
           setTimeout(() => drop.remove(), dur * 1000);
-        }, 150);
+        }, 120);
         horrorIntervals.push(dropTimer);
 
         const textTimer = setInterval(() => {
@@ -368,26 +396,58 @@
         horrorIntervals.push(textTimer);
 
         const spiders = [];
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < 6; i++) {
           const s = document.createElement('div');
           s.className = 'spider-container';
           s.innerHTML = `
-            <svg class="spider-svg" viewBox="0 0 100 100" width="50">
-              <ellipse cx="50" cy="65" rx="10" ry="15" fill="#000"/> <ellipse cx="50" cy="45" rx="7" ry="8" fill="#111"/> <g stroke="#000" stroke-width="2.5" fill="none" stroke-linecap="round">
-                <path d="M43 45 Q30 30 15 40"/><path d="M43 48 Q25 45 10 60"/><path d="M43 52 Q25 65 15 85"/><path d="M45 55 Q35 80 40 95"/>
-                <path d="M57 45 Q70 30 85 40"/><path d="M57 48 Q75 45 90 60"/><path d="M57 52 Q75 65 85 85"/><path d="M55 55 Q65 80 60 95"/>
+            <svg class="spider-svg" viewBox="0 0 100 100" width="${30 + Math.random()*30}" style="filter: drop-shadow(0 6px 4px rgba(0,0,0,0.8));">
+              <defs>
+                 <radialGradient id="spiderBody${i}">
+                    <stop offset="0%" stop-color="#2a2a2a"/>
+                    <stop offset="100%" stop-color="#000"/>
+                 </radialGradient>
+              </defs>
+              <ellipse cx="50" cy="68" rx="14" ry="20" fill="url(#spiderBody${i})"/>
+              <ellipse cx="50" cy="42" rx="10" ry="12" fill="#0a0a0a"/>
+              <path d="M45 32 L42 22 M55 32 L58 22" stroke="#000" stroke-width="3" stroke-linecap="round"/>
+              <g stroke="#050505" stroke-width="2.5" fill="none" stroke-linejoin="round" stroke-linecap="round">
+                <path d="M42 40 L25 15 L5 25"/><path d="M40 45 L15 35 L2 55"/>
+                <path d="M40 50 L15 60 L10 85"/><path d="M44 55 L30 75 L20 100"/>
+                <path d="M58 40 L75 15 L95 25"/><path d="M60 45 L85 35 L98 55"/>
+                <path d="M60 50 L85 60 L90 85"/><path d="M56 55 L70 75 L80 100"/>
               </g>
-              <circle cx="47" cy="42" r="1.5" fill="#f00"/><circle cx="53" cy="42" r="1.5" fill="#f00"/>
+              <circle cx="46" cy="38" r="1.5" fill="#f00" filter="blur(0.5px)"/>
+              <circle cx="54" cy="38" r="1.5" fill="#f00" filter="blur(0.5px)"/>
+              <circle cx="42" cy="40" r="1" fill="#a00"/><circle cx="58" cy="40" r="1" fill="#a00"/>
             </svg>`;
           document.getElementById('spidersContainer').appendChild(s);
-          spiders.push({ el: s, x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight, vx: (Math.random() - 0.5) * 3, vy: (Math.random() - 0.5) * 3 });
+          spiders.push({ 
+            el: s, 
+            x: Math.random() * window.innerWidth, 
+            y: Math.random() * window.innerHeight, 
+            vx: (Math.random() - 0.5) * 5, 
+            vy: (Math.random() - 0.5) * 5,
+            targetVx: 0, targetVy: 0
+          });
         }
+        
         const spiderMover = setInterval(() => {
           spiders.forEach(s => {
+            if(Math.random() < 0.05) {
+                s.targetVx = (Math.random() - 0.5) * 12;
+                s.targetVy = (Math.random() - 0.5) * 12;
+            }
+            s.vx += (s.targetVx - s.vx) * 0.1;
+            s.vy += (s.targetVy - s.vy) * 0.1;
             s.x += s.vx; s.y += s.vy;
-            if (s.x < -50 || s.x > window.innerWidth) s.vx *= -1;
-            if (s.y < -50 || s.y > window.innerHeight) s.vy *= -1;
-            s.el.style.transform = `translate(${s.x}px, ${s.y}px) rotate(${Math.atan2(s.vy, s.vx) * 180 / Math.PI + 90}deg)`;
+            
+            if (s.x < -100) s.x = window.innerWidth + 50;
+            if (s.x > window.innerWidth + 100) s.x = -50;
+            if (s.y < -100) s.y = window.innerHeight + 50;
+            if (s.y > window.innerHeight + 100) s.y = -50;
+            
+            const angle = Math.atan2(s.vy, s.vx) * 180 / Math.PI + 90;
+            s.el.style.transform = `translate(${s.x}px, ${s.y}px) rotate(${angle}deg)`;
           });
         }, 30);
         horrorIntervals.push(spiderMover);
@@ -440,7 +500,7 @@
       document.querySelectorAll('.check-item input').forEach(el => el.addEventListener('change', generatePassword));
       document.getElementById('year').textContent = new Date().getFullYear();
 
-      syncStates();
+      syncStates(true);
       generatePassword();
       window.generatePassword = generatePassword;
     })();
