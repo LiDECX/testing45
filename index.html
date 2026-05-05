@@ -228,10 +228,6 @@
           <polygon points="350,435 370,360 385,425"/>
           <polygon points="385,425 400,370 410,415"/>
         </g>
-        <path d="M200 280 Q190 350 200 450" fill="none" stroke="#600" stroke-width="4" stroke-linecap="round"/>
-        <path d="M240 280 Q250 380 230 480" fill="none" stroke="#400" stroke-width="6" stroke-linecap="round"/>
-        <path d="M360 280 Q370 340 360 430" fill="none" stroke="#500" stroke-width="5" stroke-linecap="round"/>
-        <path d="M400 280 Q390 370 400 490" fill="none" stroke="#700" stroke-width="3" stroke-linecap="round"/>
       </svg>
     </div>
     <div id="dropsContainer"></div>
@@ -310,10 +306,11 @@
       const glitchWords = ["ERROR", "FATAL", "DEATH", "RUN", "0xDEAD", "666", "SYSTEM FAILURE", "BLOOD", "VOID", "KILL", "ABYSS", "EYES", "SMILE", "I SEE YOU"];
 
       function syncStates() {
-        const savedTheme = localStorage.getItem('site-theme') || 'dark';
+        const savedTheme = localStorage.getItem('theme') || 'dark';
         const isBlood = localStorage.getItem('site-mode') === 'blood';
         
         body.setAttribute('data-theme', savedTheme);
+        
         if (isBlood) {
           if (!body.classList.contains('blood-mode')) body.classList.add('blood-mode');
           themeToggle.textContent = "DIE";
@@ -326,6 +323,7 @@
           themeToggle.textContent = savedTheme === 'dark' ? 'LIGHT' : 'DARK';
         }
         updateSliderTrack();
+        generatePassword();
       }
 
       function updateSliderTrack() {
@@ -339,15 +337,9 @@
         if (dblClickTimer) {
           clearTimeout(dblClickTimer);
           dblClickTimer = null;
-          const willBeBlood = !body.classList.contains('blood-mode');
-          localStorage.setItem('site-mode', willBeBlood ? 'blood' : 'normal');
+          const isCurrentlyBlood = body.classList.contains('blood-mode');
+          localStorage.setItem('site-mode', isCurrentlyBlood ? 'normal' : 'blood');
           syncStates();
-          
-          if (willBeBlood) {
-            setTimeout(() => {
-              alert("I SEE YOU, I'M WATCHING YOU");
-            }, 600);
-          }
           return;
         }
 
@@ -355,7 +347,7 @@
           if (!body.classList.contains('blood-mode')) {
             const currentTheme = body.getAttribute('data-theme');
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            localStorage.setItem('site-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
             syncStates();
           }
           dblClickTimer = null;
@@ -363,7 +355,7 @@
       });
 
       window.addEventListener('storage', (e) => {
-        if (e.key === 'site-theme' || e.key === 'site-mode') syncStates();
+        if (e.key === 'theme' || e.key === 'site-mode') syncStates();
       });
 
       function startMeat() {
@@ -399,53 +391,18 @@
         for (let i = 0; i < 6; i++) {
           const s = document.createElement('div');
           s.className = 'spider-container';
-          s.innerHTML = `
-            <svg class="spider-svg" viewBox="0 0 100 100" width="${30 + Math.random()*30}" style="filter: drop-shadow(0 6px 4px rgba(0,0,0,0.8));">
-              <defs>
-                 <radialGradient id="spiderBody${i}">
-                    <stop offset="0%" stop-color="#2a2a2a"/>
-                    <stop offset="100%" stop-color="#000"/>
-                 </radialGradient>
-              </defs>
-              <ellipse cx="50" cy="68" rx="14" ry="20" fill="url(#spiderBody${i})"/>
-              <ellipse cx="50" cy="42" rx="10" ry="12" fill="#0a0a0a"/>
-              <path d="M45 32 L42 22 M55 32 L58 22" stroke="#000" stroke-width="3" stroke-linecap="round"/>
-              <g stroke="#050505" stroke-width="2.5" fill="none" stroke-linejoin="round" stroke-linecap="round">
-                <path d="M42 40 L25 15 L5 25"/><path d="M40 45 L15 35 L2 55"/>
-                <path d="M40 50 L15 60 L10 85"/><path d="M44 55 L30 75 L20 100"/>
-                <path d="M58 40 L75 15 L95 25"/><path d="M60 45 L85 35 L98 55"/>
-                <path d="M60 50 L85 60 L90 85"/><path d="M56 55 L70 75 L80 100"/>
-              </g>
-              <circle cx="46" cy="38" r="1.5" fill="#f00" filter="blur(0.5px)"/>
-              <circle cx="54" cy="38" r="1.5" fill="#f00" filter="blur(0.5px)"/>
-              <circle cx="42" cy="40" r="1" fill="#a00"/><circle cx="58" cy="40" r="1" fill="#a00"/>
-            </svg>`;
+          s.innerHTML = `<svg class="spider-svg" viewBox="0 0 100 100" width="${30 + Math.random()*30}"><ellipse cx="50" cy="68" rx="14" ry="20" fill="#000"/><ellipse cx="50" cy="42" rx="10" ry="12" fill="#000"/><g stroke="#000" stroke-width="2.5" fill="none"><path d="M42 40 L25 15 L5 25"/><path d="M40 45 L15 35 L2 55"/><path d="M40 50 L15 60 L10 85"/><path d="M44 55 L30 75 L20 100"/><path d="M58 40 L75 15 L95 25"/><path d="M60 45 L85 35 L98 55"/><path d="M60 50 L85 60 L90 85"/><path d="M56 55 L70 75 L80 100"/></g><circle cx="46" cy="38" r="1.5" fill="#f00"/><circle cx="54" cy="38" r="1.5" fill="#f00"/></svg>`;
           document.getElementById('spidersContainer').appendChild(s);
-          spiders.push({ 
-            el: s, 
-            x: Math.random() * window.innerWidth, 
-            y: Math.random() * window.innerHeight, 
-            vx: (Math.random() - 0.5) * 5, 
-            vy: (Math.random() - 0.5) * 5,
-            targetVx: 0, targetVy: 0
-          });
+          spiders.push({ el: s, x: Math.random()*window.innerWidth, y: Math.random()*window.innerHeight, vx: 0, vy: 0, tvx: 0, tvy: 0 });
         }
         
         const spiderMover = setInterval(() => {
           spiders.forEach(s => {
-            if(Math.random() < 0.05) {
-                s.targetVx = (Math.random() - 0.5) * 12;
-                s.targetVy = (Math.random() - 0.5) * 12;
-            }
-            s.vx += (s.targetVx - s.vx) * 0.1;
-            s.vy += (s.targetVy - s.vy) * 0.1;
+            if(Math.random() < 0.05) { s.tvx = (Math.random()-0.5)*12; s.tvy = (Math.random()-0.5)*12; }
+            s.vx += (s.tvx-s.vx)*0.1; s.vy += (s.tvy-s.vy)*0.1;
             s.x += s.vx; s.y += s.vy;
-            
-            if (s.x < -100) s.x = window.innerWidth + 50;
-            if (s.x > window.innerWidth + 100) s.x = -50;
-            if (s.y < -100) s.y = window.innerHeight + 50;
-            if (s.y > window.innerHeight + 100) s.y = -50;
-            
+            if (s.x < -100) s.x = window.innerWidth+50; if (s.x > window.innerWidth+100) s.x = -50;
+            if (s.y < -100) s.y = window.innerHeight+50; if (s.y > window.innerHeight+100) s.y = -50;
             const angle = Math.atan2(s.vy, s.vx) * 180 / Math.PI + 90;
             s.el.style.transform = `translate(${s.x}px, ${s.y}px) rotate(${angle}deg)`;
           });
@@ -500,9 +457,7 @@
       document.querySelectorAll('.check-item input').forEach(el => el.addEventListener('change', generatePassword));
       document.getElementById('year').textContent = new Date().getFullYear();
 
-      syncStates(true);
-      generatePassword();
-      window.generatePassword = generatePassword;
+      syncStates();
     })();
   </script>
 </body>
