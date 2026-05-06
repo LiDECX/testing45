@@ -1,658 +1,820 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-  <title>Shikaku Puzzles — LiDECX</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
-  <style>
-    :root {
-      --bg: #0a0a0a;
-      --surface: #111111;
-      --border: #1e1e1e;
-      --accent: #e8e8e8;
-      --muted: #555;
-      --text: #999;
-      --bright: #fff;
-      --green: #4ade80;
-      --sun: #FFD166;
-      --purple: #8b5cf6;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Shikaku // CYBERPUNK</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --surface: #0f0f17;
+            --border: #1e1e30;
+            --accent: #00f0ff;
+            --muted: #5a5a7a;
+            --text: #a0a0c0;
+            --bright: #e8e8ff;
+            --green: #00ffaa;
+            --sun: #ffd700;
+            --purple: #b000ff;
+            --error: #ff3355;
+        }
 
-    [data-theme="light"] {
-      --bg: #ffffff;
-      --surface: #f5f5f5;
-      --border: #e5e5e5;
-      --accent: #1a1a1a;
-      --muted: #888;
-      --text: #444;
-      --bright: #000;
-      --green: #16a34a;
-      --sun: #f59e0b;
-      --purple: #7c3aed;
-    }
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            overscroll-behavior: none;
+            touch-action: manipulation;
+            height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            user-select: none;
+            -webkit-user-select: none;
+        }
 
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Inter', sans-serif;
-      font-weight: 400;
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-      transition: background 0.2s ease, color 0.2s ease;
-      overscroll-behavior: none;
-    }
+        .hidden { display: none !important; }
 
-    .container {
-      max-width: 680px;
-      margin: 0 auto;
-      padding: 0 24px;
-    }
+        #screen-menu {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 24px 20px;
+            text-align: center;
+            background: radial-gradient(circle at 50% 30%, #14142a, #0a0a0f);
+        }
 
-    header {
-      padding: 24px 0;
-      display: flex;
-      justify-content: flex-end;
-    }
+        .menu-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2.2rem;
+            font-weight: 600;
+            color: var(--accent);
+            text-shadow: 0 0 20px #00f0ff55;
+            letter-spacing: 6px;
+            margin-bottom: 16px;
+        }
 
-    .theme-toggle {
-      background: none;
-      border: 1px solid var(--border);
-      color: var(--bright);
-      cursor: pointer;
-      padding: 6px 12px;
-      border-radius: 6px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      transition: all 0.15s;
-    }
+        .stats-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 36px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--muted);
+            background: rgba(0,0,0,0.3);
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
 
-    .theme-toggle:hover {
-      background: var(--surface);
-      border-color: var(--muted);
-    }
+        .stat-item {
+            text-align: center;
+        }
 
-    #main-content { padding: 40px 0 60px; min-height: 70vh; }
+        .stat-value {
+            display: block;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--bright);
+            line-height: 1.2;
+        }
 
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
-      color: var(--muted);
-      border: 1px solid var(--border);
-      padding: 6px 12px;
-      border-radius: 6px;
-      margin-bottom: 32px;
-    }
+        .stat-label {
+            font-size: 0.65rem;
+            letter-spacing: 1px;
+            color: var(--muted);
+        }
 
-    .hero-name {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: clamp(2rem, 6vw, 2.5rem);
-      font-weight: 600;
-      color: var(--bright);
-      line-height: 1.2;
-      margin-bottom: 8px;
-    }
+        .diff-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            max-width: 300px;
+        }
 
-    .hero-sub {
-      font-size: 1rem;
-      color: var(--muted);
-      margin-bottom: 40px;
-    }
+        .diff-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 14px 20px;
+            border-radius: 8px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 28px 0;
-      margin-top: 60px;
-    }
+        .diff-card:active {
+            border-color: var(--accent);
+            background: rgba(0, 240, 255, 0.05);
+        }
 
-    .footer-inner {
-      max-width: 680px;
-      margin: 0 auto;
-      padding: 0 24px;
-      display: flex;
-      justify-content: space-between;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.7rem;
-      color: var(--muted);
-    }
+        .diff-name {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+            color: var(--bright);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
 
-    .hidden { display: none !important; }
+        .diff-size {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--muted);
+            background: var(--bg);
+            padding: 4px 10px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+        }
 
-    .grid {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
+        .progress-note {
+            margin-top: 28px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            color: var(--muted);
+            opacity: 0.6;
+            max-width: 260px;
+            line-height: 1.6;
+        }
 
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      padding: 24px 20px;
-      border-radius: 12px;
-      text-align: center;
-      cursor: pointer;
-      transition: background 0.2s ease, border-color 0.2s ease;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      width: 100%;
-    }
+        #screen-game {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 10px 10px 14px;
+            height: 100dvh;
+            overflow: hidden;
+        }
 
-    .card:hover {
-      border-color: var(--purple);
-      background: rgba(139, 92, 246, 0.05);
-    }
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            flex-shrink: 0;
+        }
 
-    .unit-val {
-      display: block;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 1.2rem;
-      color: var(--bright);
-      font-weight: 600;
-    }
+        .level-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--accent);
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            padding: 5px 12px;
+            border-radius: 20px;
+            letter-spacing: 1px;
+        }
 
-    .unit-label {
-      font-size: 0.75rem;
-      color: var(--muted);
-      font-family: 'JetBrains Mono', monospace;
-    }
+        .timer-display {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--sun);
+            background: rgba(0,0,0,0.4);
+            padding: 4px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            letter-spacing: 2px;
+        }
 
-    .game-toolbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
-    }
+        .toolbar {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
 
-    .btn-icon {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--bright);
-      cursor: pointer;
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.8rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.15s;
-    }
+        .btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--bright);
+            cursor: pointer;
+            padding: 7px 12px;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.15s;
+            touch-action: manipulation;
+            white-space: nowrap;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-    .btn-icon:hover:not(:disabled) { background: var(--border); }
-    .btn-icon:disabled { opacity: 0.4; cursor: not-allowed; }
-    
-    .hint-text { color: var(--sun); font-weight: 600; }
+        .btn:active {
+            background: var(--border);
+            border-color: var(--accent);
+        }
 
-    #game-container {
-      position: relative;
-      width: 100%;
-      background: var(--surface);
-      border: 2px solid var(--border);
-      border-radius: 8px;
-      touch-action: none;
-      user-select: none;
-      overflow: hidden;
-      transition: border-color 0.3s ease;
-    }
+        .btn:disabled {
+            opacity: 0.3;
+            pointer-events: none;
+        }
 
-    #game-container.won {
-      border-color: var(--green);
-    }
+        .hint-badge {
+            color: var(--sun);
+            font-weight: bold;
+        }
 
-    #grid {
-      display: grid;
-      width: 100%;
-    }
+        .game-area {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
 
-    .cell {
-      border: 0.5px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'JetBrains Mono', monospace;
-      font-weight: 600;
-      color: var(--bright);
-      box-sizing: border-box;
-      transition: opacity 0.3s;
-    }
+        #game-container {
+            position: relative;
+            background: transparent;
+            user-select: none;
+            -webkit-user-select: none;
+            transition: all 0.3s;
+            flex-shrink: 0;
+            touch-action: none;
+        }
 
-    #game-container.won .cell { border-color: transparent; }
+        #grid {
+            display: grid;
+        }
 
-    #rects-layer {
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%;
-      pointer-events: none;
-    }
+        .cell {
+            border: 0.5px solid #1a1a2e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 500;
+            color: var(--bright);
+            background: var(--surface);
+            transition: background 0.2s;
+        }
 
-    .drawn-rect {
-      position: absolute;
-      border: 2px solid var(--purple);
-      background: rgba(139, 92, 246, 0.15);
-      border-radius: 4px;
-      box-sizing: border-box;
-      transition: background 0.2s, border-color 0.2s;
-    }
+        #rects-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
 
-    .drawn-rect.hint {
-      border-color: var(--sun);
-      background: rgba(255, 209, 102, 0.2);
-    }
+        .drawn-rect {
+            position: absolute;
+            border: 1.5px solid var(--purple);
+            background: rgba(176, 0, 255, 0.12);
+            border-radius: 4px;
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .drawn-rect.hint {
+            border-color: var(--sun);
+            background: rgba(255, 215, 0, 0.18);
+        }
+        .drawn-rect.error {
+            border-color: var(--error);
+            background: rgba(255, 51, 85, 0.15);
+        }
+        #game-container.won .drawn-rect {
+            border-color: var(--green);
+            background: rgba(0, 255, 170, 0.1);
+        }
 
-    .drawn-rect.error {
-      border-color: #ef4444;
-      background: rgba(239, 68, 68, 0.15);
-    }
+        .preview-rect {
+            position: absolute;
+            border: 1.5px dashed var(--accent);
+            background: rgba(0, 240, 255, 0.06);
+            border-radius: 4px;
+        }
 
-    #game-container.won .drawn-rect {
-      border-color: var(--green);
-      background: rgba(74, 222, 128, 0.15);
-    }
+        #action-row {
+            display: flex;
+            justify-content: center;
+            flex-shrink: 0;
+            min-height: 44px;
+            align-items: center;
+        }
 
-    .preview-rect {
-      position: absolute;
-      border: 2px dashed var(--muted);
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 4px;
-      box-sizing: border-box;
-    }
+        .btn-next {
+            background: var(--green);
+            color: #000;
+            border: none;
+            padding: 10px 28px;
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            animation: fadePop 0.3s ease-out;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 0 16px #00ffaa60;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            transition: transform 0.15s;
+        }
 
-    .action-row {
-      margin-top: 24px;
-      min-height: 50px;
-      display: flex;
-      justify-content: center;
-    }
+        .btn-next:active {
+            transform: scale(0.95);
+        }
 
-    .btn-primary {
-      background: var(--bright);
-      color: var(--bg);
-      border: none;
-      padding: 12px 32px;
-      border-radius: 8px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: transform 0.2s;
-      animation: fadeInPop 0.3s ease-out forwards;
-    }
-
-    .btn-primary:active { transform: scale(0.95); }
-
-    @keyframes fadeInPop {
-      0% { opacity: 0; transform: translateY(10px) scale(0.95); }
-      100% { opacity: 1; transform: translateY(0) scale(1); }
-    }
-  </style>
+        @keyframes fadePop {
+            0% { opacity: 0; transform: scale(0.85); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+    </style>
 </head>
-<body data-theme="dark">
+<body>
 
-  <div class="container">
-    <header>
-      <button class="theme-toggle" id="themeToggle">LIGHT</button>
-    </header>
-  </div>
+    <div id="screen-menu">
+        <div class="menu-title">SHIKAKU</div>
 
-  <section id="main-content">
-    <div class="container">
-      
-      <div id="screen-menu">
-        <div class="badge">✦ LOGIC PUZZLE</div>
-        <h1 class="hero-name">Shikaku</h1>
-        <p class="hero-sub">Разделите поле на прямоугольники. Внутри каждого должна быть одна цифра, равная площади прямоугольника.</p>
-
-        <div class="grid">
-          <div class="card" onclick="startGame('easy')">
-            <span class="unit-val">Easy</span><span class="unit-label">6 × 6</span>
-          </div>
-          <div class="card" onclick="startGame('medium')">
-            <span class="unit-val">Medium</span><span class="unit-label">7 × 9</span>
-          </div>
-          <div class="card" onclick="startGame('hard')">
-            <span class="unit-val">Hard</span><span class="unit-label">9 × 12</span>
-          </div>
-          <div class="card" onclick="startGame('expert')">
-            <span class="unit-val">Expert</span><span class="unit-label">13 × 17</span>
-          </div>
-          <div class="card" onclick="startGame('master')">
-            <span class="unit-val">Master</span><span class="unit-label">14 × 20</span>
-          </div>
-          <div class="card" onclick="startGame('extreme')">
-            <span class="unit-val">Extreme</span><span class="unit-label">16 × 24</span>
-          </div>
+        <div class="stats-row">
+            <div class="stat-item">
+                <span class="stat-value" id="total-score">0</span>
+                <span class="stat-label">ОЧКИ</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-value" id="max-level">1</span>
+                <span class="stat-label">МАКС УР.</span>
+            </div>
         </div>
-      </div>
 
-      <div id="screen-game" class="hidden">
-        <div class="game-toolbar">
-          <button class="btn-icon" onclick="showMenu()">← Меню</button>
-          <div style="display: flex; gap: 8px;">
-            <button class="btn-icon" id="hint-btn" onclick="useHint()">
-              💡 <span class="hint-text" id="hint-count">3</span>
+        <div class="diff-grid">
+            <div class="diff-card" data-diff="easy">
+                <span class="diff-name">Easy</span><span class="diff-size">6×6</span>
+            </div>
+            <div class="diff-card" data-diff="medium">
+                <span class="diff-name">Medium</span><span class="diff-size">7×9</span>
+            </div>
+            <div class="diff-card" data-diff="hard">
+                <span class="diff-name">Hard</span><span class="diff-size">9×12</span>
+            </div>
+            <div class="diff-card" data-diff="expert">
+                <span class="diff-name">Expert</span><span class="diff-size">13×17</span>
+            </div>
+        </div>
+
+        <div class="progress-note">
+            Весь прогресс хранится локально и будет удалён при очистке данных сайта или удалении приложения.
+        </div>
+    </div>
+
+    <div id="screen-game" class="hidden">
+        <div class="game-header">
+            <span class="level-badge" id="level-display">LV.1 EASY</span>
+            <span class="timer-display" id="timer">00:00</span>
+        </div>
+
+        <div class="toolbar">
+            <button class="btn" id="back-btn">← BACK</button>
+            <button class="btn" id="restart-btn">↻ RETRY</button>
+            <button class="btn" id="hint-btn">
+                💡 <span class="hint-badge" id="hint-count">3</span>
             </button>
-            <button class="btn-icon" onclick="restartLevel()" title="Начать заново">↻</button>
-          </div>
         </div>
 
-        <div id="game-container">
-          <div id="grid"></div>
-          <div id="rects-layer"></div>
+        <div class="game-area" id="game-area">
+            <div id="game-container">
+                <div id="grid"></div>
+                <div id="rects-layer"></div>
+            </div>
         </div>
 
-        <div class="action-row" id="action-row">
-        </div>
-      </div>
-
+        <div id="action-row"></div>
     </div>
-  </section>
 
-  <footer>
-    <div class="footer-inner">
-      <span>© <span id="year"></span> LiDECX</span>
-      <span>v2.2.0</span>
-    </div>
-  </footer>
+    <script>
+        (function() {
+            const CONFIGS = {
+                easy: { c: 6, r: 6 },
+                medium: { c: 7, r: 9 },
+                hard: { c: 9, r: 12 },
+                expert: { c: 13, r: 17 }
+            };
 
-  <script>
-    const themeToggle = document.getElementById('themeToggle');
-    const body = document.body;
+            const DIFF_NAMES = {
+                easy: 'EASY', medium: 'MEDIUM', hard: 'HARD', expert: 'EXPERT'
+            };
 
-    const savedTheme = localStorage.getItem('theme') || 'dark';
-    body.setAttribute('data-theme', savedTheme);
-    themeToggle.textContent = savedTheme === 'dark' ? 'LIGHT' : 'DARK';
+            const DIFF_SCORES = {
+                easy: 10, medium: 25, hard: 50, expert: 100
+            };
 
-    themeToggle.addEventListener('click', () => {
-      const isDark = body.getAttribute('data-theme') === 'dark';
-      const newTheme = isDark ? 'light' : 'dark';
-      body.setAttribute('data-theme', newTheme);
-      themeToggle.textContent = isDark ? 'DARK' : 'LIGHT';
-      localStorage.setItem('theme', newTheme);
-    });
+            let state = {
+                diff: 'easy',
+                grid: [],
+                solution: [],
+                userRects: [],
+                hints: 3,
+                isWon: false,
+                drawing: false,
+                start: null,
+                end: null,
+                levelNumber: 1,
+                timerSeconds: 0,
+                timerInterval: null
+            };
 
-    document.getElementById('year').textContent = new Date().getFullYear();
+            let totalScore = 0;
+            let maxLevel = 1;
 
-    const CONFIGS = {
-      easy: { c: 6, r: 6 },
-      medium: { c: 7, r: 9 },
-      hard: { c: 9, r: 12 },
-      expert: { c: 13, r: 17 },
-      master: { c: 14, r: 20 },
-      extreme: { c: 16, r: 24 }
-    };
+            const menu = document.getElementById('screen-menu');
+            const game = document.getElementById('screen-game');
+            const container = document.getElementById('game-container');
+            const gameArea = document.getElementById('game-area');
+            const levelDisplay = document.getElementById('level-display');
+            const timerDisplay = document.getElementById('timer');
+            const hintCountEl = document.getElementById('hint-count');
+            const hintBtn = document.getElementById('hint-btn');
+            const actionRow = document.getElementById('action-row');
+            const totalScoreEl = document.getElementById('total-score');
+            const maxLevelEl = document.getElementById('max-level');
 
-    let state = {
-      diff: 'easy',
-      grid: [],
-      solution: [],
-      userRects: [],
-      hints: 3,
-      isWon: false,
-      drawing: false,
-      start: null,
-      end: null
-    };
+            let baseCellSize = 0;
 
-    function generate(cols, rows) {
-      let regions = [{ x: 0, y: 0, w: cols, h: rows }];
-      let targetCount = Math.floor((cols * rows) / 4.5); 
-      
-      for (let i = 0; i < 150; i++) {
-        if (regions.length >= targetCount) break;
-        
-        regions.sort((a, b) => (b.w * b.h) - (a.w * a.h));
-        let reg = regions[0];
-        
-        if (reg.w * reg.h <= 3) break;
+            function loadProgress() {
+                try {
+                    const saved = JSON.parse(localStorage.getItem('shikaku_progress'));
+                    if (saved) {
+                        totalScore = saved.totalScore || 0;
+                        maxLevel = saved.maxLevel || 1;
+                    }
+                } catch(e) {}
+                updateMenuStats();
+            }
 
-        let splitH;
-        if (reg.w > reg.h * 2) splitH = false;
-        else if (reg.h > reg.w * 2) splitH = true;
-        else splitH = Math.random() > 0.5;
-        
-        if (splitH && reg.h > 1) {
-          let split = Math.floor(Math.random() * (reg.h - 1)) + 1;
-          regions.shift();
-          regions.push({ x: reg.x, y: reg.y, w: reg.w, h: split });
-          regions.push({ x: reg.x, y: reg.y + split, w: reg.w, h: reg.h - split });
-        } else if (!splitH && reg.w > 1) {
-          let split = Math.floor(Math.random() * (reg.w - 1)) + 1;
-          regions.shift();
-          regions.push({ x: reg.x, y: reg.y, w: split, h: reg.h });
-          regions.push({ x: reg.x + split, y: reg.y, w: reg.w - split, h: reg.h });
-        }
-      }
+            function saveProgress() {
+                try {
+                    localStorage.setItem('shikaku_progress', JSON.stringify({
+                        totalScore: totalScore,
+                        maxLevel: maxLevel
+                    }));
+                } catch(e) {}
+                updateMenuStats();
+            }
 
-      let grid = Array(rows).fill(0).map(() => Array(cols).fill(0));
-      regions.forEach(r => {
-        let rx = r.x + Math.floor(Math.random() * r.w);
-        let ry = r.y + Math.floor(Math.random() * r.h);
-        grid[ry][rx] = r.w * r.h;
-      });
-      
-      return { grid, solution: regions };
-    }
+            function updateMenuStats() {
+                totalScoreEl.textContent = totalScore;
+                maxLevelEl.textContent = maxLevel;
+            }
 
-    const viewMenu = document.getElementById('screen-menu');
-    const viewGame = document.getElementById('screen-game');
-    const container = document.getElementById('game-container');
-    const actionRow = document.getElementById('action-row');
+            function generate(cols, rows) {
+                let regions = [{ x: 0, y: 0, w: cols, h: rows }];
+                let targetCount = Math.floor((cols * rows) / 4.5);
 
-    function startGame(diff) {
-      state.diff = diff;
-      state.hints = 3;
-      state.isWon = false;
-      state.userRects = [];
-      container.classList.remove('won');
-      
-      const { grid, solution } = generate(CONFIGS[diff].c, CONFIGS[diff].r);
-      state.grid = grid;
-      state.solution = solution;
-      
-      viewMenu.classList.add('hidden');
-      viewGame.classList.remove('hidden');
-      
-      renderBaseGrid();
-      renderRects();
-      updateUI();
-    }
+                for (let i = 0; i < 150; i++) {
+                    if (regions.length >= targetCount) break;
+                    regions.sort((a, b) => (b.w * b.h) - (a.w * a.h));
+                    let reg = regions[0];
+                    if (reg.w * reg.h <= 3) break;
 
-    function showMenu() {
-      viewGame.classList.add('hidden');
-      viewMenu.classList.remove('hidden');
-    }
+                    let splitH;
+                    if (reg.w > reg.h * 2) splitH = false;
+                    else if (reg.h > reg.w * 2) splitH = true;
+                    else splitH = Math.random() > 0.5;
 
-    function restartLevel() {
-      state.userRects = [];
-      state.hints = 3;
-      state.isWon = false;
-      container.classList.remove('won');
-      updateUI();
-      renderRects();
-    }
+                    if (splitH && reg.h > 1) {
+                        let split = Math.floor(Math.random() * (reg.h - 1)) + 1;
+                        regions.shift();
+                        regions.push({ x: reg.x, y: reg.y, w: reg.w, h: split });
+                        regions.push({ x: reg.x, y: reg.y + split, w: reg.w, h: reg.h - split });
+                    } else if (!splitH && reg.w > 1) {
+                        let split = Math.floor(Math.random() * (reg.w - 1)) + 1;
+                        regions.shift();
+                        regions.push({ x: reg.x, y: reg.y, w: split, h: reg.h });
+                        regions.push({ x: reg.x + split, y: reg.y, w: reg.w - split, h: reg.h });
+                    }
+                }
 
-    function renderBaseGrid() {
-      const { c, r } = CONFIGS[state.diff];
-      const gridEl = document.getElementById('grid');
-      gridEl.style.gridTemplateColumns = `repeat(${c}, 1fr)`;
-      gridEl.innerHTML = '';
-      
-      let fs = c > 14 ? '0.65rem' : (c > 9 ? '0.8rem' : '1.1rem');
+                let grid = Array(rows).fill(0).map(() => Array(cols).fill(0));
+                regions.forEach(r => {
+                    let rx = r.x + Math.floor(Math.random() * r.w);
+                    let ry = r.y + Math.floor(Math.random() * r.h);
+                    grid[ry][rx] = r.w * r.h;
+                });
 
-      for (let i = 0; i < r; i++) {
-        for (let j = 0; j < c; j++) {
-          const cell = document.createElement('div');
-          cell.className = 'cell';
-          cell.style.aspectRatio = '1';
-          cell.style.fontSize = fs;
-          cell.textContent = state.grid[i][j] > 0 ? state.grid[i][j] : '';
-          gridEl.appendChild(cell);
-        }
-      }
-    }
+                return { grid, solution: regions };
+            }
 
-    function renderRects() {
-      const layer = document.getElementById('rects-layer');
-      const { c, r } = CONFIGS[state.diff];
-      layer.innerHTML = '';
+            function stopTimer() {
+                if (state.timerInterval) {
+                    clearInterval(state.timerInterval);
+                    state.timerInterval = null;
+                }
+            }
 
-      state.userRects.forEach(rect => {
-        const el = document.createElement('div');
-        el.className = 'drawn-rect';
-        if (rect.isHint) el.classList.add('hint');
-        
-        let area = rect.w * rect.h;
-        let nums = 0, val = 0;
-        for (let i = rect.y; i < rect.y + rect.h; i++) {
-          for (let j = rect.x; j < rect.x + rect.w; j++) {
-            if (state.grid[i][j] > 0) { nums++; val = state.grid[i][j]; }
-          }
-        }
-        if (nums !== 1 || val !== area) el.classList.add('error');
+            function startTimer() {
+                stopTimer();
+                state.timerSeconds = 0;
+                updateTimerDisplay();
+                state.timerInterval = setInterval(() => {
+                    state.timerSeconds++;
+                    updateTimerDisplay();
+                }, 1000);
+            }
 
-        el.style.left = `${(rect.x / c) * 100}%`;
-        el.style.top = `${(rect.y / r) * 100}%`;
-        el.style.width = `${(rect.w / c) * 100}%`;
-        el.style.height = `${(rect.h / r) * 100}%`;
-        layer.appendChild(el);
-      });
+            function updateTimerDisplay() {
+                const mins = Math.floor(state.timerSeconds / 60).toString().padStart(2, '0');
+                const secs = (state.timerSeconds % 60).toString().padStart(2, '0');
+                timerDisplay.textContent = `${mins}:${secs}`;
+            }
 
-      if (state.drawing && state.start && state.end) {
-        const el = document.createElement('div');
-        el.className = 'preview-rect';
-        const x = Math.min(state.start.x, state.end.x);
-        const y = Math.min(state.start.y, state.end.y);
-        const w = Math.abs(state.start.x - state.end.x) + 1;
-        const h = Math.abs(state.start.y - state.end.y) + 1;
-        el.style.left = `${(x / c) * 100}%`;
-        el.style.top = `${(y / r) * 100}%`;
-        el.style.width = `${(w / c) * 100}%`;
-        el.style.height = `${(h / r) * 100}%`;
-        layer.appendChild(el);
-      }
-    }
+            function updateLevelDisplay() {
+                levelDisplay.textContent = `LV.${state.levelNumber} ${DIFF_NAMES[state.diff]}`;
+            }
 
-    function getCoords(e) {
-      const box = container.getBoundingClientRect();
-      const touch = e.touches && e.touches.length > 0 ? e.touches[0] : e;
-      const x = Math.floor(((touch.clientX - box.left) / box.width) * CONFIGS[state.diff].c);
-      const y = Math.floor(((touch.clientY - box.top) / box.height) * CONFIGS[state.diff].r);
-      if (x >= 0 && x < CONFIGS[state.diff].c && y >= 0 && y < CONFIGS[state.diff].r) return { x, y };
-      return null;
-    }
+            function startGame(diff, newLevel = true) {
+                stopTimer();
+                state.diff = diff;
+                state.hints = 3;
+                state.isWon = false;
+                state.userRects = [];
+                container.classList.remove('won');
 
-    container.addEventListener('pointerdown', e => {
-      if (state.isWon) return;
-      const pos = getCoords(e);
-      if (!pos) return;
+                if (newLevel) {
+                    state.levelNumber = 1;
+                }
 
-      const idx = state.userRects.findIndex(r => pos.x >= r.x && pos.x < r.x + r.w && pos.y >= r.y && pos.y < r.y + r.h);
-      if (idx !== -1) {
-        state.userRects.splice(idx, 1);
-        renderRects();
-        checkWin();
-        return;
-      }
+                const { grid, solution } = generate(CONFIGS[diff].c, CONFIGS[diff].r);
+                state.grid = grid;
+                state.solution = solution;
 
-      state.drawing = true;
-      state.start = pos;
-      state.end = pos;
-      container.setPointerCapture(e.pointerId);
-      renderRects();
-    });
+                menu.classList.add('hidden');
+                game.classList.remove('hidden');
 
-    container.addEventListener('pointermove', e => {
-      if (!state.drawing) return;
-      const pos = getCoords(e);
-      if (pos) { 
-        state.end = pos; 
-        renderRects(); 
-      }
-    });
+                renderBaseGrid();
+                renderRects();
+                updateUI();
+                updateLevelDisplay();
 
-    container.addEventListener('pointerup', e => {
-      if (!state.drawing) return;
-      state.drawing = false;
-      
-      const x = Math.min(state.start.x, state.end.x);
-      const y = Math.min(state.start.y, state.end.y);
-      const w = Math.abs(state.start.x - state.end.x) + 1;
-      const h = Math.abs(state.start.y - state.end.y) + 1;
-      
-      const overlap = state.userRects.some(r => !(x + w <= r.x || x >= r.x + r.w || y + h <= r.y || y >= r.y + r.h));
-      if (!overlap) {
-        state.userRects.push({ x, y, w, h });
-      }
-      
-      renderRects();
-      checkWin();
-    });
+                startTimer();
+            }
 
-    function useHint() {
-      if (state.hints <= 0 || state.isWon) return;
-      
-      const unplaced = state.solution.filter(s => 
-        !state.userRects.some(u => u.x === s.x && u.y === s.y && u.w === s.w && u.h === s.h)
-      );
-      
-      if (unplaced.length > 0) {
-        const hint = unplaced[Math.floor(Math.random() * unplaced.length)];
-        state.userRects = state.userRects.filter(r => 
-          (hint.x + hint.w <= r.x || hint.x >= r.x + r.w || hint.y + hint.h <= r.y || hint.y >= r.y + r.h)
-        );
-        state.userRects.push({ ...hint, isHint: true });
-        
-        state.hints--;
-        updateUI();
-        renderRects();
-        checkWin();
-      }
-    }
+            function showMenu() {
+                stopTimer();
+                game.classList.add('hidden');
+                menu.classList.remove('hidden');
+            }
 
-    function checkWin() {
-      const { c, r } = CONFIGS[state.diff];
-      let totalArea = 0;
-      let valid = true;
-      
-      state.userRects.forEach(rect => {
-        let area = rect.w * rect.h;
-        totalArea += area;
-        let nums = 0, val = 0;
-        for (let i = rect.y; i < rect.y + rect.h; i++) {
-          for (let j = rect.x; j < rect.x + rect.w; j++) {
-            if (state.grid[i][j] > 0) { nums++; val = state.grid[i][j]; }
-          }
-        }
-        if (nums !== 1 || val !== area) valid = false;
-      });
+            function restartLevel() {
+                stopTimer();
+                state.userRects = [];
+                state.hints = 3;
+                state.isWon = false;
+                container.classList.remove('won');
+                updateUI();
+                renderRects();
+                startTimer();
+            }
 
-      if (valid && totalArea === c * r) {
-        state.isWon = true;
-        container.classList.add('won');
-        updateUI();
-      }
-    }
+            function nextLevel() {
+                state.levelNumber++;
+                const levelBonus = Math.max(1, Math.floor(state.levelNumber / 5));
+                totalScore += DIFF_SCORES[state.diff] + levelBonus;
+                if (state.levelNumber > maxLevel) {
+                    maxLevel = state.levelNumber;
+                }
+                saveProgress();
+                startGame(state.diff, false);
+            }
 
-    function updateUI() {
-      document.getElementById('hint-count').textContent = state.hints;
-      document.getElementById('hint-btn').disabled = state.hints <= 0 || state.isWon;
-      
-      actionRow.innerHTML = '';
-      if (state.isWon) {
-        const btn = document.createElement('button');
-        btn.className = 'btn-primary';
-        btn.textContent = 'Следующий уровень ➔';
-        btn.onclick = () => startGame(state.diff);
-        actionRow.appendChild(btn);
-      }
-    }
-  </script>
+            function renderBaseGrid() {
+                const { c, r } = CONFIGS[state.diff];
+                const gridEl = document.getElementById('grid');
+                gridEl.style.gridTemplateColumns = `repeat(${c}, 1fr)`;
+                gridEl.innerHTML = '';
+
+                let fs = c > 12 ? '0.6rem' : (c > 9 ? '0.8rem' : '1.1rem');
+
+                const maxWidth = Math.min(window.innerWidth - 20, 400);
+                const maxHeight = window.innerHeight * 0.55;
+                const sizeByWidth = maxWidth / c;
+                const sizeByHeight = maxHeight / r;
+                baseCellSize = Math.floor(Math.min(sizeByWidth, sizeByHeight, 50));
+
+                for (let i = 0; i < r; i++) {
+                    for (let j = 0; j < c; j++) {
+                        const cell = document.createElement('div');
+                        cell.className = 'cell';
+                        cell.style.aspectRatio = '1';
+                        cell.style.fontSize = fs;
+                        cell.style.width = `${baseCellSize}px`;
+                        cell.style.height = `${baseCellSize}px`;
+                        cell.textContent = state.grid[i][j] > 0 ? state.grid[i][j] : '';
+                        gridEl.appendChild(cell);
+                    }
+                }
+
+                container.style.width = `${baseCellSize * c}px`;
+                container.style.height = `${baseCellSize * r}px`;
+            }
+
+            function renderRects() {
+                const layer = document.getElementById('rects-layer');
+                const { c, r } = CONFIGS[state.diff];
+                layer.innerHTML = '';
+
+                state.userRects.forEach(rect => {
+                    const el = document.createElement('div');
+                    el.className = 'drawn-rect';
+                    if (rect.isHint) el.classList.add('hint');
+
+                    let area = rect.w * rect.h;
+                    let nums = 0, val = 0;
+                    for (let i = rect.y; i < rect.y + rect.h; i++) {
+                        for (let j = rect.x; j < rect.x + rect.w; j++) {
+                            if (state.grid[i] && state.grid[i][j] > 0) { nums++; val = state.grid[i][j]; }
+                        }
+                    }
+                    if (nums !== 1 || val !== area) el.classList.add('error');
+
+                    el.style.left = `${(rect.x / c) * 100}%`;
+                    el.style.top = `${(rect.y / r) * 100}%`;
+                    el.style.width = `${(rect.w / c) * 100}%`;
+                    el.style.height = `${(rect.h / r) * 100}%`;
+                    layer.appendChild(el);
+                });
+
+                if (state.drawing && state.start && state.end) {
+                    const el = document.createElement('div');
+                    el.className = 'preview-rect';
+                    const x = Math.min(state.start.x, state.end.x);
+                    const y = Math.min(state.start.y, state.end.y);
+                    const w = Math.abs(state.start.x - state.end.x) + 1;
+                    const h = Math.abs(state.start.y - state.end.y) + 1;
+                    el.style.left = `${(x / c) * 100}%`;
+                    el.style.top = `${(y / r) * 100}%`;
+                    el.style.width = `${(w / c) * 100}%`;
+                    el.style.height = `${(h / r) * 100}%`;
+                    layer.appendChild(el);
+                }
+            }
+
+            function getCoords(e) {
+                const box = container.getBoundingClientRect();
+                const touch = e.touches && e.touches.length > 0 ? e.touches[0] : e;
+                const { c, r } = CONFIGS[state.diff];
+
+                const relX = (touch.clientX - box.left) / box.width;
+                const relY = (touch.clientY - box.top) / box.height;
+
+                const x = Math.floor(relX * c);
+                const y = Math.floor(relY * r);
+
+                if (x >= 0 && x < c && y >= 0 && y < r) return { x, y };
+                return null;
+            }
+
+            container.addEventListener('pointerdown', (e) => {
+                if (state.isWon) return;
+
+                const pos = getCoords(e);
+                if (!pos) return;
+
+                const idx = state.userRects.findIndex(r => pos.x >= r.x && pos.x < r.x + r.w && pos.y >= r.y && pos.y < r.y + r.h);
+                if (idx !== -1) {
+                    state.userRects.splice(idx, 1);
+                    renderRects();
+                    checkWin();
+                    return;
+                }
+
+                state.drawing = true;
+                state.start = pos;
+                state.end = pos;
+                container.setPointerCapture(e.pointerId);
+                renderRects();
+            });
+
+            container.addEventListener('pointermove', (e) => {
+                if (!state.drawing) return;
+                e.preventDefault();
+                const pos = getCoords(e);
+                if (pos) {
+                    state.end = pos;
+                    renderRects();
+                }
+            });
+
+            container.addEventListener('pointerup', (e) => {
+                if (!state.drawing) return;
+                state.drawing = false;
+
+                const x = Math.min(state.start.x, state.end.x);
+                const y = Math.min(state.start.y, state.end.y);
+                const w = Math.abs(state.start.x - state.end.x) + 1;
+                const h = Math.abs(state.start.y - state.end.y) + 1;
+
+                const overlap = state.userRects.some(r => !(x + w <= r.x || x >= r.x + r.w || y + h <= r.y || y >= r.y + r.h));
+                if (!overlap) {
+                    state.userRects.push({ x, y, w, h });
+                }
+
+                renderRects();
+                checkWin();
+            });
+
+            container.addEventListener('pointerleave', () => {
+                if (state.drawing) {
+                    state.drawing = false;
+                    renderRects();
+                }
+            });
+
+            function useHint() {
+                if (state.hints <= 0 || state.isWon) return;
+
+                const unplaced = state.solution.filter(s =>
+                    !state.userRects.some(u => u.x === s.x && u.y === s.y && u.w === s.w && u.h === s.h)
+                );
+
+                if (unplaced.length > 0) {
+                    const hint = unplaced[Math.floor(Math.random() * unplaced.length)];
+                    state.userRects = state.userRects.filter(r =>
+                        (hint.x + hint.w <= r.x || hint.x >= r.x + r.w || hint.y + hint.h <= r.y || hint.y >= r.y + r.h)
+                    );
+                    state.userRects.push({ ...hint, isHint: true });
+                    state.hints--;
+                    updateUI();
+                    renderRects();
+                    checkWin();
+                }
+            }
+
+            function checkWin() {
+                const { c, r } = CONFIGS[state.diff];
+                let totalArea = 0;
+                let valid = true;
+
+                state.userRects.forEach(rect => {
+                    let area = rect.w * rect.h;
+                    totalArea += area;
+                    let nums = 0, val = 0;
+                    for (let i = rect.y; i < rect.y + rect.h; i++) {
+                        for (let j = rect.x; j < rect.x + rect.w; j++) {
+                            if (state.grid[i] && state.grid[i][j] > 0) { nums++; val = state.grid[i][j]; }
+                        }
+                    }
+                    if (nums !== 1 || val !== area) valid = false;
+                });
+
+                if (valid && totalArea === c * r) {
+                    state.isWon = true;
+                    container.classList.add('won');
+                    stopTimer();
+                    updateUI();
+                }
+            }
+
+            function updateUI() {
+                hintCountEl.textContent = state.hints;
+                hintBtn.disabled = state.hints <= 0 || state.isWon;
+
+                actionRow.innerHTML = '';
+                if (state.isWon) {
+                    const btn = document.createElement('button');
+                    btn.className = 'btn-next';
+                    btn.textContent = 'NEXT LEVEL ▶';
+                    btn.onclick = nextLevel;
+                    actionRow.appendChild(btn);
+                }
+            }
+
+            document.querySelectorAll('.diff-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const diff = card.dataset.diff;
+                    startGame(diff);
+                });
+            });
+
+            document.getElementById('back-btn').addEventListener('click', showMenu);
+            document.getElementById('restart-btn').addEventListener('click', restartLevel);
+            document.getElementById('hint-btn').addEventListener('click', useHint);
+
+            loadProgress();
+        })();
+    </script>
 </body>
 </html>
