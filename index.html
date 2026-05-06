@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, shrink-to-fit=no, viewport-fit=cover">
-  <title>Password Generator — LiDECX</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+  <title>Shikaku Puzzles — LiDECX</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;900&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
   <style>
     :root {
       --bg: #0a0a0a;
@@ -17,8 +17,8 @@
       --text: #999;
       --bright: #fff;
       --green: #4ade80;
-      --primary: #6366f1;
-      --gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+      --sun: #FFD166;
+      --purple: #8b5cf6;
     }
 
     [data-theme="light"] {
@@ -30,435 +30,629 @@
       --text: #444;
       --bright: #000;
       --green: #16a34a;
-      --primary: #4f46e5;
-      --gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-    }
-
-    body.blood-mode {
-      --bg: #020000;
-      --surface: #0a0000;
-      --border: #3a0000;
-      --accent: #ff0000;
-      --text: #a44;
-      --bright: #fcc;
-      --primary: #f00;
-      --gradient: linear-gradient(135deg, #900 0%, #300 100%);
+      --sun: #f59e0b;
+      --purple: #7c3aed;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    html, body {
-      overflow-x: hidden;
-      width: 100%;
-      position: relative;
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      transition: background 0.2s ease, color 0.2s ease;
+      overscroll-behavior: none;
     }
 
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes glitchPulse { 0% { box-shadow: 0 0 20px rgba(255,0,0,0.1); border-color: #300; } 50% { box-shadow: 0 0 50px rgba(255,0,0,0.6); border-color: #f00; } 100% { box-shadow: 0 0 20px rgba(255,0,0,0.1); border-color: #300; } }
-    @keyframes textGlitch { 
-      0% { transform: translate(0); text-shadow: 3px 0 0 red, -3px 0 0 #300; }
-      20% { transform: translate(-3px, 3px); text-shadow: -3px 0 0 red, 3px 0 0 #300; }
-      40% { transform: translate(-3px, -3px); text-shadow: 3px 0 0 red, -3px 0 0 #300; }
-      60% { transform: translate(3px, 3px); text-shadow: -3px 0 0 red, -3px 0 0 #300; }
-      80% { transform: translate(3px, -3px); text-shadow: 3px 0 0 red, -3px 0 0 #300; }
-      100% { transform: translate(0); text-shadow: none; }
-    }
-    @keyframes insaneGlitch {
-      0%, 100% { opacity: 1; transform: scale(1) skew(0deg) translate(-50%, -50%); filter: blur(0); }
-      10% { opacity: 0.8; transform: scale(1.05) skew(5deg) translate(-48%, -52%); filter: blur(2px) drop-shadow(0 0 50px red); }
-      20% { opacity: 0.1; transform: scale(0.9) skew(-10deg) translate(-52%, -48%); }
-      30% { opacity: 1; transform: scale(1.1) skew(15deg) translate(-50%, -50%); filter: contrast(200%) drop-shadow(0 0 100px darkred); }
-      35% { opacity: 0; }
-      40% { opacity: 0.9; transform: scale(1) skew(0deg) translate(-50%, -50%); }
-    }
-    @keyframes dripViscous {
-      0% { transform: translateY(-50px) rotate(-45deg) scale(1); opacity: 1; }
-      80% { transform: translateY(80vh) rotate(-45deg) scale(0.8); opacity: 1; }
-      100% { transform: translateY(110vh) rotate(-45deg) scale(0.5); opacity: 0; }
-    }
-    @keyframes crtFlicker {
-      0% { opacity: 0.02; } 50% { opacity: 0.05; } 100% { opacity: 0.02; }
-    }
-    @keyframes legTwitch {
-      0%, 100% { transform: rotate(0deg); }
-      50% { transform: rotate(3deg); }
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 24px;
     }
 
-    body { 
-      background: var(--bg); 
-      color: var(--text); 
-      font-family: 'Inter', sans-serif; 
-      transition: background 0.3s ease, color 0.3s ease; 
-      min-height: 100vh; 
-    }
-    
-    .blood-overlay { position: fixed; inset: 0; pointer-events: none; z-index: 999; display: none; overflow: hidden; }
-    body.blood-mode .blood-overlay { display: block; }
-
-    .scanline {
-      position: absolute; inset: 0;
-      background: linear-gradient(to bottom, transparent 50%, rgba(255, 0, 0, 0.05) 50%);
-      background-size: 100% 4px;
-      z-index: 1005;
-      animation: crtFlicker 0.1s infinite;
+    header {
+      padding: 24px 0;
+      display: flex;
+      justify-content: flex-end;
     }
 
-    .blood-drip {
-      position: fixed; top: 0;
-      background: linear-gradient(135deg, #f00 0%, #700 50%, #200 100%);
-      border-radius: 0 50% 50% 50%;
-      box-shadow: inset -2px -2px 4px rgba(0,0,0,0.6), 0 0 8px rgba(255,0,0,0.8);
-      z-index: 1002; 
-      animation: dripViscous linear forwards;
-      transform-origin: center;
-    }
-
-    .spider-container { position: fixed; z-index: 1003; pointer-events: none; }
-    .spider-svg { animation: legTwitch 0.1s infinite alternate ease-in-out; }
-    
-    .scary-smile-mega {
-      position: fixed; top: 50%; left: 50%; width: 80vw; max-width: 800px;
-      transform: translate(-50%, -50%); z-index: 900; opacity: 0; pointer-events: none;
-      animation: insaneGlitch 6s infinite steps(2, end);
-    }
-    
-    .blood-puddle-mega {
-      position: fixed; bottom: -50px; left: -10%; width: 120%; height: 250px;
-      background: radial-gradient(ellipse at 50% 100%, #600 0%, #300 30%, #100 60%, transparent 100%);
-      z-index: 998; filter: blur(3px) contrast(1.5);
-      transform: scaleY(0.5); transform-origin: bottom;
-    }
-
-    .container { max-width: 680px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 10; }
-    
-    header { padding: 24px 0; display: flex; justify-content: flex-end; }
-    
     .theme-toggle {
-      background: none; border: 1px solid var(--border); color: var(--bright);
-      cursor: pointer; padding: 6px 12px; border-radius: 6px;
-      font-family: 'JetBrains Mono', monospace; font-size: 0.7rem;
-      transition: all 0.15s; font-weight: 600;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--bright);
+      cursor: pointer;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      transition: all 0.15s;
+    }
+
+    .theme-toggle:hover {
+      background: var(--surface);
+      border-color: var(--muted);
+    }
+
+    #main-content { padding: 40px 0 60px; min-height: 70vh; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 6px;
+      margin-bottom: 32px;
+    }
+
+    .hero-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: clamp(2rem, 6vw, 2.5rem);
+      font-weight: 600;
+      color: var(--bright);
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+
+    .hero-sub {
+      font-size: 1rem;
+      color: var(--muted);
+      margin-bottom: 40px;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 0;
+      margin-top: 60px;
+    }
+
+    .footer-inner {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+
+    .hidden { display: none !important; }
+
+    .grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 24px 20px;
+      border-radius: 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      width: 100%;
+    }
+
+    .card:hover {
+      border-color: var(--purple);
+      background: rgba(139, 92, 246, 0.05);
+    }
+
+    .unit-val {
+      display: block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.2rem;
+      color: var(--bright);
+      font-weight: 600;
+    }
+
+    .unit-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .game-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .btn-icon {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--bright);
+      cursor: pointer;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.15s;
+    }
+
+    .btn-icon:hover:not(:disabled) { background: var(--border); }
+    .btn-icon:disabled { opacity: 0.4; cursor: not-allowed; }
+    
+    .hint-text { color: var(--sun); font-weight: 600; }
+
+    #game-container {
+      position: relative;
+      width: 100%;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      touch-action: none;
       user-select: none;
-    }
-    body.blood-mode .theme-toggle { 
-      border-color: #f00; color: #fff; background: #900; 
-      box-shadow: 0 0 25px #f00; animation: textGlitch 0.1s infinite; 
-      padding: 8px 16px; font-weight: 800;
+      overflow: hidden;
+      transition: border-color 0.3s ease;
     }
 
-    #hero { padding: 40px 0 60px; animation: fadeIn 0.6s ease-out; position: relative; z-index: 1000; }
-    .badge { display: inline-flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--muted); border: 1px solid var(--border); padding: 6px 12px; border-radius: 6px; margin-bottom: 32px; background: var(--surface); }
-    body.blood-mode .badge { color: #fcc; border-color: #f00; background: rgba(50,0,0,0.8); }
-    
-    .hero-name { font-family: 'JetBrains Mono', monospace; font-size: clamp(2.5rem, 8vw, 3.5rem); font-weight: 600; color: var(--bright); line-height: 1.1; margin-bottom: 12px; letter-spacing: -2px; }
-    body.blood-mode .hero-name { color: #fff; animation: textGlitch 0.15s infinite; font-weight: 900; }
-    .hero-sub { font-size: 1.1rem; color: var(--muted); margin-bottom: 40px; }
-    body.blood-mode .hero-sub { color: #f55; font-weight: 600; }
-    
-    .generator-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 32px; transition: 0.3s; position: relative; overflow: hidden; }
-    body.blood-mode .generator-card { animation: glitchPulse 2s infinite; background: rgba(10,0,0,0.9); border: 2px solid #500; }
-    
-    .output-container { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between; }
-    body.blood-mode .output-container { border-color: #f00; background: #000; box-shadow: inset 0 0 15px rgba(255,0,0,0.3); }
-    #passwordOutput { font-family: 'JetBrains Mono', monospace; font-size: 1.4rem; color: var(--bright); word-break: break-all; font-weight: 600; }
-    body.blood-mode #passwordOutput { color: #f00; text-shadow: 0 0 10px #f00; font-weight: 800; }
-    
-    .copy-btn { background: var(--gradient); border: none; color: white; padding: 10px 16px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
-    body.blood-mode .copy-btn { background: #f00; box-shadow: 0 0 15px #f00; font-weight: 800; }
-    
-    .control-group { margin-bottom: 24px; }
-    .label-row { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; font-weight: 600; margin-bottom: 16px; color: var(--accent); }
-    
-    input[type="range"] { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 3px; outline: none; cursor: pointer; }
-    input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--bright); border: 2px solid var(--primary); }
-    body.blood-mode input[type="range"] { background: #300; }
-    body.blood-mode input[type="range"]::-webkit-slider-thumb { background: #f00; border-color: #fff; }
+    #game-container.won {
+      border-color: var(--green);
+    }
 
-    .checkbox-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 24px; }
-    .check-item { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; font-weight: 600; cursor: pointer; padding: 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 8px; transition: 0.2s; color: var(--text); }
-    body.blood-mode .check-item { border-color: #500; background: rgba(255,0,0,0.05); color: #faa; }
-    
-    .generate-btn { width: 100%; margin-top: 32px; padding: 18px; border-radius: 8px; border: none; background: var(--gradient); color: white; font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 1.1rem; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: 0.2s; }
-    body.blood-mode .generate-btn { background: #900; border: 2px solid #f00; box-shadow: 0 0 30px rgba(255,0,0,0.4); animation: textGlitch 0.2s infinite alternate-reverse; font-weight: 800; }
-    
-    .strength-section { margin-top: 20px; }
-    .strength-label { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 600; color: var(--muted); margin-bottom: 8px; display: flex; justify-content: space-between; }
-    .strength-meter { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
-    .strength-fill { height: 100%; width: 0%; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-    
-    footer { border-top: 1px solid var(--border); padding: 28px 0; margin-top: 60px; position: relative; z-index: 1000; }
-    body.blood-mode footer { border-color: #500; }
-    .footer-inner { max-width: 680px; margin: 0 auto; padding: 0 24px; display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--muted); }
-    body.blood-mode .footer-inner { color: #f55; font-weight: 600; }
-    
-    @media (max-width: 480px) { .checkbox-grid { grid-template-columns: 1fr; } }
+    #grid {
+      display: grid;
+      width: 100%;
+    }
+
+    .cell {
+      border: 0.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      color: var(--bright);
+      box-sizing: border-box;
+      transition: opacity 0.3s;
+    }
+
+    #game-container.won .cell { border-color: transparent; }
+
+    #rects-layer {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none;
+    }
+
+    .drawn-rect {
+      position: absolute;
+      border: 2px solid var(--purple);
+      background: rgba(139, 92, 246, 0.15);
+      border-radius: 4px;
+      box-sizing: border-box;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .drawn-rect.hint {
+      border-color: var(--sun);
+      background: rgba(255, 209, 102, 0.2);
+    }
+
+    .drawn-rect.error {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.15);
+    }
+
+    #game-container.won .drawn-rect {
+      border-color: var(--green);
+      background: rgba(74, 222, 128, 0.15);
+    }
+
+    .preview-rect {
+      position: absolute;
+      border: 2px dashed var(--muted);
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    .action-row {
+      margin-top: 24px;
+      min-height: 50px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      background: var(--bright);
+      color: var(--bg);
+      border: none;
+      padding: 12px 32px;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s;
+      animation: fadeInPop 0.3s ease-out forwards;
+    }
+
+    .btn-primary:active { transform: scale(0.95); }
+
+    @keyframes fadeInPop {
+      0% { opacity: 0; transform: translateY(10px) scale(0.95); }
+      100% { opacity: 1; transform: translateY(0) scale(1); }
+    }
   </style>
 </head>
 <body data-theme="dark">
-
-  <div class="blood-overlay" id="bloodOverlay">
-    <div class="scanline"></div>
-    <div class="blood-puddle-mega"></div>
-    <div class="scary-smile-mega" id="smile">
-      <svg viewBox="0 0 600 600" width="100%" filter="drop-shadow(0 0 40px #f00)">
-        <path d="M150 100 Q300 -50 450 100 Q550 300 450 500 Q300 600 150 500 Q50 300 150 100" fill="#030000" stroke="#100" stroke-width="5"/>
-        <ellipse cx="220" cy="250" rx="60" ry="40" fill="#000" transform="rotate(-10 220 250)"/>
-        <ellipse cx="380" cy="250" rx="60" ry="40" fill="#000" transform="rotate(10 380 250)"/>
-        <circle cx="220" cy="250" r="3" fill="#fff" filter="blur(1px)"/>
-        <circle cx="380" cy="250" r="3" fill="#fff" filter="blur(1px)"/>
-        <circle cx="220" cy="250" r="8" fill="#f00" opacity="0.6" filter="blur(3px)"/>
-        <circle cx="380" cy="250" r="8" fill="#f00" opacity="0.6" filter="blur(3px)"/>
-        <path d="M290 320 L300 280 L310 320 Q300 340 290 320" fill="#000"/>
-        <path d="M150 400 Q300 350 450 400 Q300 550 150 400" fill="#000"/>
-        <g fill="#999" stroke="#200" stroke-width="1">
-          <polygon points="170,395 180,420 190,392"/>
-          <polygon points="190,392 205,430 215,388"/>
-          <polygon points="215,388 230,435 245,384"/>
-          <polygon points="245,384 265,440 280,380"/>
-          <polygon points="280,380 300,445 320,380"/>
-          <polygon points="320,380 335,440 355,384"/>
-          <polygon points="355,384 370,435 385,388"/>
-          <polygon points="385,388 395,430 410,392"/>
-          <polygon points="410,392 420,420 430,395"/>
-          <polygon points="180,410 190,380 200,415"/>
-          <polygon points="200,415 215,370 230,425"/>
-          <polygon points="230,425 250,360 270,435"/>
-          <polygon points="270,435 290,350 310,440"/>
-          <polygon points="310,440 330,350 350,435"/>
-          <polygon points="350,435 370,360 385,425"/>
-          <polygon points="385,425 400,370 410,415"/>
-        </g>
-      </svg>
-    </div>
-    <div id="dropsContainer"></div>
-    <div id="spidersContainer"></div>
-  </div>
 
   <div class="container">
     <header>
       <button class="theme-toggle" id="themeToggle">LIGHT</button>
     </header>
   </div>
-  
-  <section id="hero">
+
+  <section id="main-content">
     <div class="container">
-      <div class="badge" data-orig="✦ LIDECX DOUBLE-CLICK">✦ LIDECX DOUBLE-CLICK</div>
-      <h1 class="hero-name" data-orig="SafePass">SafePass</h1>
-      <p class="hero-sub" data-orig="Генератор паролей. Полная конфиденциальность.">Генератор паролей. Полная конфиденциальность.</p>
       
-      <div class="generator-card">
-        <div class="output-container">
-          <span id="passwordOutput">Нажми «Создать»</span>
-          <button class="copy-btn" data-orig="COPY" onclick="copyPassword()">COPY</button>
-        </div>
-        
-        <div class="strength-section">
-          <div class="strength-label">
-            <span>УРОВЕНЬ ЗАЩИТЫ</span>
-            <span id="strengthText">—</span>
+      <div id="screen-menu">
+        <div class="badge">✦ LOGIC PUZZLE</div>
+        <h1 class="hero-name">Shikaku</h1>
+        <p class="hero-sub">Разделите поле на прямоугольники. Внутри каждого должна быть одна цифра, равная площади прямоугольника.</p>
+
+        <div class="grid">
+          <div class="card" onclick="startGame('easy')">
+            <span class="unit-val">Easy</span><span class="unit-label">6 × 6</span>
           </div>
-          <div class="strength-meter">
-            <div class="strength-fill" id="strengthFill"></div>
+          <div class="card" onclick="startGame('medium')">
+            <span class="unit-val">Medium</span><span class="unit-label">7 × 9</span>
+          </div>
+          <div class="card" onclick="startGame('hard')">
+            <span class="unit-val">Hard</span><span class="unit-label">9 × 12</span>
+          </div>
+          <div class="card" onclick="startGame('expert')">
+            <span class="unit-val">Expert</span><span class="unit-label">13 × 17</span>
+          </div>
+          <div class="card" onclick="startGame('master')">
+            <span class="unit-val">Master</span><span class="unit-label">14 × 20</span>
+          </div>
+          <div class="card" onclick="startGame('extreme')">
+            <span class="unit-val">Extreme</span><span class="unit-label">16 × 24</span>
           </div>
         </div>
-        
-        <div class="control-group" style="margin-top: 24px;">
-          <div class="label-row">
-            <span data-orig="Длина пароля">Длина пароля</span>
-            <span id="lengthVal" style="color: var(--primary)">16</span>
-          </div>
-          <input type="range" id="lengthSlider" min="4" max="64" value="16">
-        </div>
-        
-        <div class="checkbox-grid">
-          <label class="check-item"><input type="checkbox" id="upper" checked> <span data-orig="ВЕРХНИЙ РЕГИСТР">ВЕРХНИЙ РЕГИСТР</span></label>
-          <label class="check-item"><input type="checkbox" id="lower" checked> <span data-orig="НИЖНИЙ РЕГИСТР">НИЖНИЙ РЕГИСТР</span></label>
-          <label class="check-item"><input type="checkbox" id="numbers" checked> <span data-orig="ЦИФРЫ 0-9">ЦИФРЫ 0-9</span></label>
-          <label class="check-item"><input type="checkbox" id="symbols" checked> <span data-orig="СИМВОЛЫ !@#">СИМВОЛЫ !@#</span></label>
-        </div>
-        
-        <button class="generate-btn" data-orig="СГЕНЕРИРОВАТЬ ПАРОЛЬ" onclick="generatePassword()">СГЕНЕРИРОВАТЬ ПАРОЛЬ</button>
       </div>
+
+      <div id="screen-game" class="hidden">
+        <div class="game-toolbar">
+          <button class="btn-icon" onclick="showMenu()">← Меню</button>
+          <div style="display: flex; gap: 8px;">
+            <button class="btn-icon" id="hint-btn" onclick="useHint()">
+              💡 <span class="hint-text" id="hint-count">3</span>
+            </button>
+            <button class="btn-icon" onclick="restartLevel()" title="Начать заново">↻</button>
+          </div>
+        </div>
+
+        <div id="game-container">
+          <div id="grid"></div>
+          <div id="rects-layer"></div>
+        </div>
+
+        <div class="action-row" id="action-row">
+        </div>
+      </div>
+
     </div>
   </section>
-  
+
   <footer>
     <div class="footer-inner">
-      <span data-orig="© 2026 LiDECX">© <span id="year"></span> LiDECX</span>
-      <span data-orig="v.VOID-Ω.99">v.VOID-Ω.99</span>
+      <span>© <span id="year"></span> LiDECX</span>
+      <span>v2.2.0</span>
     </div>
   </footer>
 
   <script>
-    (function() {
-      const body = document.body;
-      const themeToggle = document.getElementById('themeToggle');
-      const lengthSlider = document.getElementById('lengthSlider');
-      const lengthVal = document.getElementById('lengthVal');
-      const passwordOutput = document.getElementById('passwordOutput');
-      const strengthFill = document.getElementById('strengthFill');
-      const strengthText = document.getElementById('strengthText');
-      const heroSub = document.querySelector('.hero-sub');
-      const badge = document.querySelector('.badge');
+    const themeToggle = document.getElementById('themeToggle');
+    const body = document.body;
 
-      let dblClickTimer = null;
-      let horrorIntervals = [];
-      const glitchWords = ["ERROR", "FATAL", "DEATH", "RUN", "0xDEAD", "666", "SYSTEM FAILURE", "BLOOD", "VOID", "KILL", "ABYSS", "EYES", "SMILE", "I SEE YOU"];
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    body.setAttribute('data-theme', savedTheme);
+    themeToggle.textContent = savedTheme === 'dark' ? 'LIGHT' : 'DARK';
 
-      function syncStates() {
-        const savedTheme = localStorage.getItem('theme') || 'dark';
-        const isBlood = localStorage.getItem('site-mode') === 'blood';
+    themeToggle.addEventListener('click', () => {
+      const isDark = body.getAttribute('data-theme') === 'dark';
+      const newTheme = isDark ? 'light' : 'dark';
+      body.setAttribute('data-theme', newTheme);
+      themeToggle.textContent = isDark ? 'DARK' : 'LIGHT';
+      localStorage.setItem('theme', newTheme);
+    });
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    const CONFIGS = {
+      easy: { c: 6, r: 6 },
+      medium: { c: 7, r: 9 },
+      hard: { c: 9, r: 12 },
+      expert: { c: 13, r: 17 },
+      master: { c: 14, r: 20 },
+      extreme: { c: 16, r: 24 }
+    };
+
+    let state = {
+      diff: 'easy',
+      grid: [],
+      solution: [],
+      userRects: [],
+      hints: 3,
+      isWon: false,
+      drawing: false,
+      start: null,
+      end: null
+    };
+
+    function generate(cols, rows) {
+      let regions = [{ x: 0, y: 0, w: cols, h: rows }];
+      let targetCount = Math.floor((cols * rows) / 4.5); 
+      
+      for (let i = 0; i < 150; i++) {
+        if (regions.length >= targetCount) break;
         
-        body.setAttribute('data-theme', savedTheme);
+        regions.sort((a, b) => (b.w * b.h) - (a.w * a.h));
+        let reg = regions[0];
         
-        if (isBlood) {
-          if (!body.classList.contains('blood-mode')) body.classList.add('blood-mode');
-          themeToggle.textContent = "DIE";
-          heroSub.innerText = 'КОНФИДЕНЦИАЛЬНОСТИ НЕТ. МЫ ВИДИМ ВСЁ.';
-          if (!horrorIntervals.length) startMeat();
-        } else {
-          body.classList.remove('blood-mode');
-          stopMeat();
-          heroSub.innerText = heroSub.getAttribute('data-orig');
-          themeToggle.textContent = savedTheme === 'dark' ? 'LIGHT' : 'DARK';
+        if (reg.w * reg.h <= 3) break;
+
+        let splitH;
+        if (reg.w > reg.h * 2) splitH = false;
+        else if (reg.h > reg.w * 2) splitH = true;
+        else splitH = Math.random() > 0.5;
+        
+        if (splitH && reg.h > 1) {
+          let split = Math.floor(Math.random() * (reg.h - 1)) + 1;
+          regions.shift();
+          regions.push({ x: reg.x, y: reg.y, w: reg.w, h: split });
+          regions.push({ x: reg.x, y: reg.y + split, w: reg.w, h: reg.h - split });
+        } else if (!splitH && reg.w > 1) {
+          let split = Math.floor(Math.random() * (reg.w - 1)) + 1;
+          regions.shift();
+          regions.push({ x: reg.x, y: reg.y, w: split, h: reg.h });
+          regions.push({ x: reg.x + split, y: reg.y, w: reg.w - split, h: reg.h });
         }
-        updateSliderTrack();
-        generatePassword();
       }
 
-      function updateSliderTrack() {
-        const val = (lengthSlider.value - lengthSlider.min) / (lengthSlider.max - lengthSlider.min) * 100;
-        const primary = getComputedStyle(body).getPropertyValue('--primary').trim();
-        const border = getComputedStyle(body).getPropertyValue('--border').trim();
-        lengthSlider.style.background = `linear-gradient(to right, ${primary} ${val}%, ${border} ${val}%)`;
-      }
+      let grid = Array(rows).fill(0).map(() => Array(cols).fill(0));
+      regions.forEach(r => {
+        let rx = r.x + Math.floor(Math.random() * r.w);
+        let ry = r.y + Math.floor(Math.random() * r.h);
+        grid[ry][rx] = r.w * r.h;
+      });
+      
+      return { grid, solution: regions };
+    }
 
-      themeToggle.addEventListener('click', () => {
-        if (dblClickTimer) {
-          clearTimeout(dblClickTimer);
-          dblClickTimer = null;
-          const isCurrentlyBlood = body.classList.contains('blood-mode');
-          localStorage.setItem('site-mode', isCurrentlyBlood ? 'normal' : 'blood');
-          syncStates();
-          return;
+    const viewMenu = document.getElementById('screen-menu');
+    const viewGame = document.getElementById('screen-game');
+    const container = document.getElementById('game-container');
+    const actionRow = document.getElementById('action-row');
+
+    function startGame(diff) {
+      state.diff = diff;
+      state.hints = 3;
+      state.isWon = false;
+      state.userRects = [];
+      container.classList.remove('won');
+      
+      const { grid, solution } = generate(CONFIGS[diff].c, CONFIGS[diff].r);
+      state.grid = grid;
+      state.solution = solution;
+      
+      viewMenu.classList.add('hidden');
+      viewGame.classList.remove('hidden');
+      
+      renderBaseGrid();
+      renderRects();
+      updateUI();
+    }
+
+    function showMenu() {
+      viewGame.classList.add('hidden');
+      viewMenu.classList.remove('hidden');
+    }
+
+    function restartLevel() {
+      state.userRects = [];
+      state.hints = 3;
+      state.isWon = false;
+      container.classList.remove('won');
+      updateUI();
+      renderRects();
+    }
+
+    function renderBaseGrid() {
+      const { c, r } = CONFIGS[state.diff];
+      const gridEl = document.getElementById('grid');
+      gridEl.style.gridTemplateColumns = `repeat(${c}, 1fr)`;
+      gridEl.innerHTML = '';
+      
+      let fs = c > 14 ? '0.65rem' : (c > 9 ? '0.8rem' : '1.1rem');
+
+      for (let i = 0; i < r; i++) {
+        for (let j = 0; j < c; j++) {
+          const cell = document.createElement('div');
+          cell.className = 'cell';
+          cell.style.aspectRatio = '1';
+          cell.style.fontSize = fs;
+          cell.textContent = state.grid[i][j] > 0 ? state.grid[i][j] : '';
+          gridEl.appendChild(cell);
         }
+      }
+    }
 
-        dblClickTimer = setTimeout(() => {
-          if (!body.classList.contains('blood-mode')) {
-            const currentTheme = body.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            localStorage.setItem('theme', newTheme);
-            syncStates();
+    function renderRects() {
+      const layer = document.getElementById('rects-layer');
+      const { c, r } = CONFIGS[state.diff];
+      layer.innerHTML = '';
+
+      state.userRects.forEach(rect => {
+        const el = document.createElement('div');
+        el.className = 'drawn-rect';
+        if (rect.isHint) el.classList.add('hint');
+        
+        let area = rect.w * rect.h;
+        let nums = 0, val = 0;
+        for (let i = rect.y; i < rect.y + rect.h; i++) {
+          for (let j = rect.x; j < rect.x + rect.w; j++) {
+            if (state.grid[i][j] > 0) { nums++; val = state.grid[i][j]; }
           }
-          dblClickTimer = null;
-        }, 250);
-      });
-
-      window.addEventListener('storage', (e) => {
-        if (e.key === 'theme' || e.key === 'site-mode') syncStates();
-      });
-
-      function startMeat() {
-        stopMeat();
-        const dropTimer = setInterval(() => {
-          const drop = document.createElement('div');
-          drop.className = 'blood-drip';
-          drop.style.left = (Math.random() * 100) + '%';
-          const size = Math.random() * 10 + 6;
-          drop.style.width = size + 'px';
-          drop.style.height = size + 'px';
-          const dur = Math.random() * 1.5 + 1.2;
-          drop.style.animationDuration = dur + 's';
-          document.getElementById('dropsContainer').appendChild(drop);
-          setTimeout(() => drop.remove(), dur * 1000);
-        }, 120);
-        horrorIntervals.push(dropTimer);
-
-        const textTimer = setInterval(() => {
-          if (Math.random() > 0.4) {
-            const textNodes = document.querySelectorAll('[data-orig]');
-            const el = textNodes[Math.floor(Math.random() * textNodes.length)];
-            const orig = el.getAttribute('data-orig');
-            el.innerText = glitchWords[Math.floor(Math.random() * glitchWords.length)];
-            el.style.color = '#f00';
-            setTimeout(() => { el.innerText = orig; el.style.color = ''; }, 150);
-          }
-          badge.innerText = `✦ ${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`;
-        }, 250);
-        horrorIntervals.push(textTimer);
-
-        const spiders = [];
-        for (let i = 0; i < 6; i++) {
-          const s = document.createElement('div');
-          s.className = 'spider-container';
-          s.innerHTML = `<svg class="spider-svg" viewBox="0 0 100 100" width="${30 + Math.random()*30}"><ellipse cx="50" cy="68" rx="14" ry="20" fill="#000"/><ellipse cx="50" cy="42" rx="10" ry="12" fill="#000"/><g stroke="#000" stroke-width="2.5" fill="none"><path d="M42 40 L25 15 L5 25"/><path d="M40 45 L15 35 L2 55"/><path d="M40 50 L15 60 L10 85"/><path d="M44 55 L30 75 L20 100"/><path d="M58 40 L75 15 L95 25"/><path d="M60 45 L85 35 L98 55"/><path d="M60 50 L85 60 L90 85"/><path d="M56 55 L70 75 L80 100"/></g><circle cx="46" cy="38" r="1.5" fill="#f00"/><circle cx="54" cy="38" r="1.5" fill="#f00"/></svg>`;
-          document.getElementById('spidersContainer').appendChild(s);
-          spiders.push({ el: s, x: Math.random()*window.innerWidth, y: Math.random()*window.innerHeight, vx: 0, vy: 0, tvx: 0, tvy: 0 });
         }
+        if (nums !== 1 || val !== area) el.classList.add('error');
+
+        el.style.left = `${(rect.x / c) * 100}%`;
+        el.style.top = `${(rect.y / r) * 100}%`;
+        el.style.width = `${(rect.w / c) * 100}%`;
+        el.style.height = `${(rect.h / r) * 100}%`;
+        layer.appendChild(el);
+      });
+
+      if (state.drawing && state.start && state.end) {
+        const el = document.createElement('div');
+        el.className = 'preview-rect';
+        const x = Math.min(state.start.x, state.end.x);
+        const y = Math.min(state.start.y, state.end.y);
+        const w = Math.abs(state.start.x - state.end.x) + 1;
+        const h = Math.abs(state.start.y - state.end.y) + 1;
+        el.style.left = `${(x / c) * 100}%`;
+        el.style.top = `${(y / r) * 100}%`;
+        el.style.width = `${(w / c) * 100}%`;
+        el.style.height = `${(h / r) * 100}%`;
+        layer.appendChild(el);
+      }
+    }
+
+    function getCoords(e) {
+      const box = container.getBoundingClientRect();
+      const touch = e.touches && e.touches.length > 0 ? e.touches[0] : e;
+      const x = Math.floor(((touch.clientX - box.left) / box.width) * CONFIGS[state.diff].c);
+      const y = Math.floor(((touch.clientY - box.top) / box.height) * CONFIGS[state.diff].r);
+      if (x >= 0 && x < CONFIGS[state.diff].c && y >= 0 && y < CONFIGS[state.diff].r) return { x, y };
+      return null;
+    }
+
+    container.addEventListener('pointerdown', e => {
+      if (state.isWon) return;
+      const pos = getCoords(e);
+      if (!pos) return;
+
+      const idx = state.userRects.findIndex(r => pos.x >= r.x && pos.x < r.x + r.w && pos.y >= r.y && pos.y < r.y + r.h);
+      if (idx !== -1) {
+        state.userRects.splice(idx, 1);
+        renderRects();
+        checkWin();
+        return;
+      }
+
+      state.drawing = true;
+      state.start = pos;
+      state.end = pos;
+      container.setPointerCapture(e.pointerId);
+      renderRects();
+    });
+
+    container.addEventListener('pointermove', e => {
+      if (!state.drawing) return;
+      const pos = getCoords(e);
+      if (pos) { 
+        state.end = pos; 
+        renderRects(); 
+      }
+    });
+
+    container.addEventListener('pointerup', e => {
+      if (!state.drawing) return;
+      state.drawing = false;
+      
+      const x = Math.min(state.start.x, state.end.x);
+      const y = Math.min(state.start.y, state.end.y);
+      const w = Math.abs(state.start.x - state.end.x) + 1;
+      const h = Math.abs(state.start.y - state.end.y) + 1;
+      
+      const overlap = state.userRects.some(r => !(x + w <= r.x || x >= r.x + r.w || y + h <= r.y || y >= r.y + r.h));
+      if (!overlap) {
+        state.userRects.push({ x, y, w, h });
+      }
+      
+      renderRects();
+      checkWin();
+    });
+
+    function useHint() {
+      if (state.hints <= 0 || state.isWon) return;
+      
+      const unplaced = state.solution.filter(s => 
+        !state.userRects.some(u => u.x === s.x && u.y === s.y && u.w === s.w && u.h === s.h)
+      );
+      
+      if (unplaced.length > 0) {
+        const hint = unplaced[Math.floor(Math.random() * unplaced.length)];
+        state.userRects = state.userRects.filter(r => 
+          (hint.x + hint.w <= r.x || hint.x >= r.x + r.w || hint.y + hint.h <= r.y || hint.y >= r.y + r.h)
+        );
+        state.userRects.push({ ...hint, isHint: true });
         
-        const spiderMover = setInterval(() => {
-          spiders.forEach(s => {
-            if(Math.random() < 0.05) { s.tvx = (Math.random()-0.5)*12; s.tvy = (Math.random()-0.5)*12; }
-            s.vx += (s.tvx-s.vx)*0.1; s.vy += (s.tvy-s.vy)*0.1;
-            s.x += s.vx; s.y += s.vy;
-            if (s.x < -100) s.x = window.innerWidth+50; if (s.x > window.innerWidth+100) s.x = -50;
-            if (s.y < -100) s.y = window.innerHeight+50; if (s.y > window.innerHeight+100) s.y = -50;
-            const angle = Math.atan2(s.vy, s.vx) * 180 / Math.PI + 90;
-            s.el.style.transform = `translate(${s.x}px, ${s.y}px) rotate(${angle}deg)`;
-          });
-        }, 30);
-        horrorIntervals.push(spiderMover);
+        state.hints--;
+        updateUI();
+        renderRects();
+        checkWin();
       }
+    }
 
-      function stopMeat() {
-        horrorIntervals.forEach(clearInterval);
-        horrorIntervals = [];
-        document.getElementById('dropsContainer').innerHTML = '';
-        document.getElementById('spidersContainer').innerHTML = '';
-        document.querySelectorAll('[data-orig]').forEach(el => { el.innerText = el.getAttribute('data-orig'); el.style.color = ''; });
-        badge.innerText = badge.getAttribute('data-orig');
-      }
-
-      function generatePassword() {
-        const length = +lengthSlider.value;
-        let charset = "";
-        if (document.getElementById('upper').checked) charset += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        if (document.getElementById('lower').checked) charset += "abcdefghijklmnopqrstuvwxyz";
-        if (document.getElementById('numbers').checked) charset += "0123456789";
-        if (document.getElementById('symbols').checked) charset += "!@#$%^&*()_+=-";
-        if (!charset) { passwordOutput.textContent = "ВЫБЕРИТЕ ПАРАМЕТРЫ"; strengthFill.style.width = "0%"; return; }
-        let pass = "";
-        for (let i = 0; i < length; i++) pass += charset[Math.floor(Math.random() * charset.length)];
-        passwordOutput.textContent = pass;
-        let width = (length / 64) * 100;
-        strengthFill.style.width = width + "%";
-        if (body.classList.contains('blood-mode')) {
-          strengthFill.style.background = "#f00"; strengthText.textContent = "БЕЗНАДЕЖНО";
-        } else {
-          strengthFill.style.background = width < 35 ? "#ef4444" : width < 70 ? "#fbbf24" : "var(--green)";
-          strengthText.textContent = width < 35 ? "СЛАБЫЙ" : width < 70 ? "СРЕДНИЙ" : "НАДЁЖНЫЙ";
+    function checkWin() {
+      const { c, r } = CONFIGS[state.diff];
+      let totalArea = 0;
+      let valid = true;
+      
+      state.userRects.forEach(rect => {
+        let area = rect.w * rect.h;
+        totalArea += area;
+        let nums = 0, val = 0;
+        for (let i = rect.y; i < rect.y + rect.h; i++) {
+          for (let j = rect.x; j < rect.x + rect.w; j++) {
+            if (state.grid[i][j] > 0) { nums++; val = state.grid[i][j]; }
+          }
         }
-      }
-
-      window.copyPassword = function() {
-        navigator.clipboard.writeText(passwordOutput.textContent);
-        const btn = document.querySelector('.copy-btn');
-        const orig = btn.getAttribute('data-orig');
-        btn.textContent = body.classList.contains('blood-mode') ? "УКРАДЕНО" : "DONE";
-        setTimeout(() => btn.textContent = orig, 1000);
-      };
-
-      lengthSlider.addEventListener('input', (e) => {
-        lengthVal.textContent = e.target.value;
-        updateSliderTrack();
-        generatePassword();
+        if (nums !== 1 || val !== area) valid = false;
       });
 
-      document.querySelectorAll('.check-item input').forEach(el => el.addEventListener('change', generatePassword));
-      document.getElementById('year').textContent = new Date().getFullYear();
+      if (valid && totalArea === c * r) {
+        state.isWon = true;
+        container.classList.add('won');
+        updateUI();
+      }
+    }
 
-      syncStates();
-    })();
+    function updateUI() {
+      document.getElementById('hint-count').textContent = state.hints;
+      document.getElementById('hint-btn').disabled = state.hints <= 0 || state.isWon;
+      
+      actionRow.innerHTML = '';
+      if (state.isWon) {
+        const btn = document.createElement('button');
+        btn.className = 'btn-primary';
+        btn.textContent = 'Следующий уровень ➔';
+        btn.onclick = () => startGame(state.diff);
+        actionRow.appendChild(btn);
+      }
+    }
   </script>
 </body>
 </html>
